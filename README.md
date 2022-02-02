@@ -15,6 +15,7 @@ A user-friendly interface for configuring an [ExoPlaSim](https://github.com/alph
 - [ ] Import/Export Preset Files, saving the hassle of redoing settings.
 - [ ] Import directly from ExoPlaSim .py file, this may or may not be possible.
 - [ ] UI themes (eg. Dark Mode).
+
 Any other ideas/suggestions welcome!
 
 ## Requirements
