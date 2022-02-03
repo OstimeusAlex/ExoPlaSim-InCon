@@ -13,6 +13,7 @@ from tkinter.ttk import *
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 
 from convert_sra import convert_sra
+import helptext as ht
 
 #Toggle Values
 tidaltog = 0
@@ -34,478 +35,6 @@ ptog = 0
 gtog = 0
 stmtog = 0
 baltog = 0
-
-#Help Prompts
-####Model Parameters
-def helpjctnme(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Project Name
-The name of your project, this is not the same as the name for the output file/folder""")
-def helpstrtyr(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Start Year
-1 by default; What number year the project should start at (eg. '2000' will have the model start at 2000).
-This is arbitrary, however must be positive.""")
-def helpotptype(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Output Type
-.nc by default; File extension to use for the output, if using the pyburn postprocessor.
-If using any of .hdf5, .he5, or .h5, then h5py must be installed.""")
-def helpcpucnt(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: CPU Count
-4 by default; Number of CPUs for ExoPlaSim to use.""")
-def helpresision(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Precision
-8 by default; Precision (in bytes) of some internal numbers used, either 4 or 8.
-4 will run a tad faster, but may be less stable and more prone to crashing.""")
-def helpresolution(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Resolution
-T21 by default; Sets the resolution used for modelling the planet’s surface,
-thus the resolution of the geography one can import into the model and the output one will get.
-These are the resolutions ExoPlaSim can handle, and the associated codes to input here:
-
-Code|Height|Width
- T21|  32  |  64
- T42|  64  | 128
- T63|  96  | 192
- T85| 128  | 256
-T106| 160  | 320
-T127| 192  | 384
-T170| 256  | 512""")
-def helpcrshtlrnt(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Crash Tolorant
-False by default; If set to True, then if the model crashes (and at least 10 years have been simulated),it will rewind 10 years and try again.
-This can help get around some crashes caused by essentially just random noise in the model, without requiring manually restarting it each time.
-
-On the other hand, if there’s some more fundamental issue with the model
-(e.g., it’s warming to the point that the oceans start boiling away) then this feature could cause it to be trapped in an infinite loop; 
-So it’s probably best to leave it off if you’re “exploring” new configurations, and to check up on the model when you do turn it on.""")
-def helplayers(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Layers
-10 by default; Number of atmospheric layers modeled—in essence, the vertical resolution of the model grid.
-Low-resolution models seem to work fine with 5, which saves a good deal of computing time.
-Higher-resolution models may require more layers for best accuracy, but would further extend the runtime.""")
-def helprecompile(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Recompile
-False by default; If set to True, forces exoplasim to compile again before running.
-May be useful if you’ve altered some of the source files.""")
-
-####Stellar Parameters
-def helpstrtmp(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Star Temperature
-5772.0 by default; The effective temperature of the star in Kelvin, will be used to adjust atmospheric absorption and surface albedo.
-It does not affect flux or year length, and if not set, a sunlike star will be assumed.""")
-def helpstlrflx(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Stellar Flux
-1367.0 by default; The flux of sunlight hitting the top of the planet’s atmosphere, in watts/meter^2.
-Value represents Earth's Stellar Flux.""")
-
-####Orbital Parameters
-def helpyrlngth(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Year Length
-365.25 by default; Length of the year, in 24-hour Earth days.
-This controls the period the planet takes to orbit its star, not the length of the years used for the output files and the model run controls;
-Those are set by the runsteps parameter, though generally speaking they should probably be the same, except for very short orbital periods.
-
-To properly produce Koppen maps from the output files, this should be the same length of time as the model year.
-year * 1440 = runsteps * timestep""")
-def helpdaylngth(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Day Length
-1.0 by default; Rotation period of the planet, compared to Earth.
-This is a sidereal day (23 hours 56 minutes for Earth).
-For planets with many orbits per year it should be an insignificant difference from a solar day.
-
-Ideally there should be a whole number of timesteps in a solar day, and a whole number of solar days in a month.
-(rotationperiod * 1440) / timestep = an integer
-runsteps / times = (rotationperiod * 1440 / timestep) * an integer""")
-def helpeccentr(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Eccentricity
-0.016715 by default; Eccentricity of the planet’s orbit.""")
-def helpoblqty(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Obliquity
-23.441 by default; Obliquity, A.K.A. axial tilt, in degrees.""")
-def helplngpri(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Longitude of Periapsis
-102.7 by default; Longitude (angle along the orbit) of periapsis (point when the planet is closest to the star) in degrees.
-Measured from the autumnal equinox, which is used to orient the planet’s rotational axis relative to its orbit.""")
-def helpfxdobt(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Fixed Orbit
-True by default; True forces the orbit to remain unchanged throughout the simulation.
-False allows for ExoPlaSim to calculate Milankovitch cycles to alter the planet’s orbit and orientation.
-
-The latter feature is still under development, so it’s probably best to keep this on for now.""")
-
-####Rotational Parameters
-def helptdlkd(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Tidally Locked
-False by Default; True locks the sun to one longitude.""")
-def helpsbstlrlng(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Substellar Longitude
-180 by Default; Longitude of the substellar point, in degrees.
-If importing geography with 0 longitude at the center, the geography will be offset 180 degrees from the model’s coordinate system.
-The default of 180 would places the substellar point at 0 longitude.""")
-def helpsbstlrdsync(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Substellar Desync
-0.0 by Default; Rate at which the substellar point drifts from its initial longitude, in degrees per minute.
-One could use this to approximate spin-orbit resonances other than 1:1
-(eg. drift of 180 degrees per orbit would approximate the 3:2 resonance)
-
-But the effects of eccentricity on the movement of the substellar point are not properly modelled in the current version of ExoPlaSim.
-Can be positive or negative.""")
-def helptmpcntrst(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Temperature Contrast
-0.0 by Default; Adds an initial temperature contrast between the substellar point and the antistellar point, in Kelvin.
-Increasing it to, 100 may help the model balance faster.""")
-
-####Planet Parameters
-def helpgrvty(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Gravity
-9.80665 by Default; Acceleration due to gravity at the planet’s surface, in meters/second^2.""")
-def helprdus(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Radius
-1.0 by Default; Radius of the planet relative to Earth.""")
-def helporgrphy(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Orography
-1.0 by Default; Scaling factor applied to the above-defined topography, down to flat continents at 0.0.
-Extreme conditions on high mountain peaks or deep valley floors can sometimes cause crashes, so flattening out the topography can help tell if that’s the issue.""")
-def helpaquaplnt(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Aqua Planet
-False by Default; True erases land surfaces (including the default earth geography) and gives a uniform, all-ocean planet.
-May run a bit faster, so it can be useful for debugging or quick tests of other factors.""")
-def helpdsrtplnt(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Desert Planet
-False by Default; True erases all seas and gives a fully land-covered planet.""")
-
-####Vegetation Parameters
-def helpvgtn(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Vegetation
-None by Default; Controls a vegetation model, which will impact surface albedo and humidity.
-Not a very advanced model and probably won’t handle particularly exotic climates too well, but it’s still nice to have.
-
-None will leave the model off
-"Diagnostic" vegetation is fixed to an initial value of vegetation cover across all land
-"Dynamic" will activate a vegetation model that will grow and die back in response to the local climate, producing an estimate of the resulting forest cover in the output.
-This will probably slow down the model to some extent, so one might want to leave it off until putting together a final model.""")
-def helpvgaclrtn(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Vegetation Acceleration
-1 by Default; Accelerates the rate of vegetation growth.""")
-def helpbiomsgrwth(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Biomass Growth
-1.0 by Default; Amount of biomass produced by vegetation in tonnes/hectare/year.""")
-def helpintlgrth(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Initial Growth
-0.5 by Default; Adds vegetation cover to all land at the start of the model.
-Might save some time running the model to equilibrium and make the resulting climate somewhat less arid than it would be if it started without vegetation.
-Should be between 0 and 1.""")
-def helpstmtlcndtnce(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Initial Stomatal Conductance
-1.0 by Default; Rate at which CO2 enters or water vapour exits through the stomata of leaves at the start of the simulation.""")
-def helpvgtnrghns(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Initial Vegetation Roughness
-2.0 by Default; Determines how much vegetation slows down wind speeds at the start of the simulation.""")
-def helpslcbncntnt(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Initial Soil Carbon Content
-0.0 by Default; How much carbon is stored within soil at the start of the simulation.""")
-def helplntcbncntnt(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Initial Plant Carbon Content
-0.0 by Default; How much carbon is stored within plants at the start of the simulation.""")
-
-####Surface Parameters
-def helpwtsl(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Wet Soil
-False by Default; True alters the albedo of land surfaces based on how wet they are; wetter land has a lower albedo, so it reflects less light.""")
-def helpslalbdo(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Soil Albedo
-Disabled by Default; Can be set to a fixed albedo value that will be used for all land.
-Usually shouldn’t do this for Earthlike planets, could use it to model some sort of unusual desert planet covered in more reflective desert sand or salt.""")
-def helpsldpth(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Soil Depth
-Disabled by Default; Scaling factor for the depth of soil layers in meters.""")
-def helpslhtcpsty(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Soil Heat Capacity
-Disabled by Default; Heat capacity of the soil, in (10^6)J/m^3/K""")
-def helpslwtrcpsty(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Soil Water Capacity
-Disabled by Default; Water capacity of the soil, in meters.""")
-def helpslstrtn(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Initial Soil Saturation
-Disabled by Default; Initial fractional saturation of the soil.""")
-def helpsnwalb(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Snow/Ice Albedo
-Disabled by Default; Can be set to a fixed albedo value that will be used for all snow and ice.""")
-def helpmxsnw(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Max Snow
-Disabled by Default; Maximum snow depth in meters. Set to -1 to have no limit.""")
-def helpseaice(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Sea Ice
-True by Default; If False, disables radiative effects of sea ice (although sea ice itself is still computed).""")
-def helpocnalb(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Ocean Albedo
-Disabled by Default; Can be set to a fixed albedo value that will be used for all oceans.""")
-def helpmxdlyrdpth(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Mixed Layer Depth
-50.0 by Default; Depth of the mixed-layer ocean in meters.""")
-def helpocnznth(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Ocean Zenith
-ECHAM-3 by Default; The zenith-angle dependence to use for blue-light reflectance from the ocean.""")
-
-####Geographic Parameters
-def helpimgsratog(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Image/SRA Toggle
-False by Default; Determines whether to produce SRA files through images (False) or use existing SRA files (True).""")
-def helphghtmpimg(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Height Map Image
-N/A by Default; Path to a (ideally) black and white .png image, with black as lowest elevation and white as highest.
-Resolution of the image must be some multiple of the model resolution.""")
-def helpwtrthrshld(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Water Threshold
-0 by Default; Colour value at which sea level is at.
-When making a height map, one may have also included ocean topography, and thus sea level may not be where black(0) is.""")
-def helphghstelvtn(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Highest Elevation
-8849.0 by Default; The highest point of land (in meters).""")
-def helplwstelvtn(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Lowest Elevation
--11034.0 by Default; The lowest point of land (in meters), used if the planet has no oceans.""")
-def helpimgdbg(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Image Debug
-False by Default; If True will produce debug images showing the land mask during the process of converting images to SRA files.""")
-def helpsranme(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: SRA Name
-Set the name to be used for the output SRA files.""")
-def helplndsra(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Land SRA
-N/A by Default; Path to a .sra file containing a land/sea mask for the planet’s geography.
-It’ll default to Earth’s geography (at least for T21 and T42 runs) if not set.""")
-def helptposra(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Topographic SRA
-N/A by Default; Path to a .sra file containing the planet’s topography.""")
-
-####Atmospheric Parameters
-def helprsure(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Pressure
-1.0 by Default; Total surface pressure in bars.
-Unnecessary if one has already set all the partial pressures of the component gasses in your atmosphere,
-Though one can combine this with the partial pressures of some of the component gasses (in which case one should set a gas constant as well).""")
-def helpgscnstnt(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Gas Constant
-287.0 by Default; Effective gas constant, in Joules / (kilograms * Kelvin).
-Can be calculated as the molar gas constant (8.314 J / K*mol) divided by the average molar mass of the atmosphere, in kg/mol.""")
-def helpdrycre(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Dry Core
-False by Default; If True, evaporation is turned off, and a dry atmosphere will be used.""")
-def helpozne(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Ozone
-False by Default; True adds an ozone layer, which slightly increases greenhouse heating, among other effects.
-Any planet with oxygen should probably have some ozone as well.
-However ExoPlaSim’s handling of ozone has been tuned to match Earth and may not be very accurate for significantly different atmospheres or stars.
-
-Maybe still use it for Earthlike planets with significant atmospheric oxygen orbiting sunlike stars
-Possibly best to exclude otherwise, even though this may cause a slight underestimate in greenhouse heating.""")
-def helpgsprsurs(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Gas Pressures (AKA Partial Pressures)
-False by Default; Enabling allows one to set partial pressures(bar) of various gasses:
-H2 - Hydrogen
-He - Helium
-N2 - Nitrogen
-O2 - Oxygen
-Ar - Argon
-Ne - Neon
-Kr - Krypton
-H20 - Water Vapour
-CO2 - Carbon Dioxide
-
-NOTE: Other than ozone, CO2 is the only greenhouse gas one can directly set.
-H20 only affects surface pressure and the gas constant;
-It is not referenced in determining humidity, any aspect of the water cycle, or greenhouse heating by water vapour.""")
-
-####Glacial Parameters
-def helpglcrs(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Glaciers
-False by Default; True allows for new glaciers to form.""")
-def helpgrhght(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Glacier Height
-0.0 by Default; A value of 0 or greater will place glaciers with that depth in meters over all land surfaces when the model starts.
-A value of -1 will not add any initial glaciers.""")
-def helpgrthrshld(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Glacier Threshold
-2.0 by Default; Sets the minimum depth of accumulated snow required for glaciers to form, in meters.""")
-
-####Model Dynamic Parameters
-def helptimestep(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Timestep
-45.0 by default; How much time passes in each step of the simulation, in minutes.
-Longer timesteps will make the simulation run faster, but it may be less stable and accurate.
-
-For tidal-locked planets 30.0 is recommended, in general if a crash occurs, reduce the timestep
-(especially if the Konsole output refers to “non-finite temperatures”).
-
-Generally seems to work better if there are a whole number of timesteps in a 24-hour day.
-Timesteps of 5, 6, 10, 12, 15, 18, 20, 24, 30, 36, 40, 45, and 60 minutes are all decent options.
-(24 * 60) / timestep = an integer""")
-def helprunsteps(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Runsteps
-11520 by default; How often averaged data is written to an output file(a simulation year), in number of timesteps.
-By default this is set for a 360-day year, ExoPlaSim will automatically adjust to different timesteps if not configured here.
-
-This does not alter the simulated planet’s orbital period, or really any aspect of its climate;
-it merely alters the period of time referred to in later steps that run the model for a period of years, and the length of time represented in the output files.
-
-Should contain a whole number of NSTPW intervals.
-runsteps / NSTPW = an integer""")
-def helpsnapshots(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Snapshots
-If set, the program will produce a “snapshot” whenever this number of timesteps passes, recording the state of the model at that particular moment.
-If using this, it’s recommended to set it to be equal to around 15 days such that it doesn’t slow down the model too much
-(480 for a 45-minute timestep. 720 for a 30-minute timestep etc.).""")
-def helpnstpw(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: NSTPW (Number of STeps Per Write)
-160 by Default; Controls how often data recorded from the model is averaged together, in number of timesteps.
-
-The amount of time this represents should be kept close to 120 hours.
-It need not necessarily be a whole number of solar days, though that may be convenient to help keep things straight.
-"~4 < (NSTPW * timestep) / 1440 < ~6" should be best.""")
-def helphysfltr(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Physics Filter
-None by Default; In some cases, it may be necessary to include physics filters.
-This typically becomes necessary when sharp features are projected on the model’s smallest spectral modes, causing Gibbs “ripples”.
-Earth-like models typically do not require filtering, but tidally-locked models do.
-Filtering may be beneficial for Earth-like models at very high resolutions as well, or if there is sharp topography.
-
-Three filter functional forms are included in ExoPlaSim: Cesaro, exponential, and Lander-Hoskins.""")
-def helpfltrapp(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Filter Application
-None by Default; Physics filters can be applied at two different points;
-Either at the transform from gridpoint to spectral (GP), or the reverse (SP). In most cases, the ideal usage is to use both.
-
-Generally, a gridpoint->spectral filter is good for dealing with oscillations caused by sharp jumps and small features in the gridpoint tendencies.
-Conversely, a spectral->gridpoint filter is good for dealing with oscillations from small features in spectral fields causing small features to appear in gridpoint tendencies.
-Any oscillations not removed by one filter will be amplified through physical feedbacks if not suppressed by the other filter.""")
-def helpstmclmtlgy(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Storm Climatology
-False by Default; Toggles whether or not storm climatology should be computed.
-If True, output fields related to storm climatology will be added to standard output files.
-
-NOTE: Enabling this mode currently roughly doubles the computational cost of the model.""")
-def helphghcdnce(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: High Cadence
-False by Default; Allows more data to be collected, especially during storm activity.
-May allow one to track the development of individual storms, but may not be accurate at low resolutions.""")
-def helprntbal(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Run To Balance
-False by Default; Runs the model until it appears to have reached equilibrium.
-Judged by the balance between average incoming sunlight and outgoing heat remaining unchanged over several years.""")
-def helprntme(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Run Time
-100 by Default; If Run To Balance not enabled, will run the model for specified amount of years.""")
-def helpthrshld(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Threshold
-0.0005 by Default; Energy balance threshold model should run to, if using Run To Balance.
-In W/m^2/yr average drift in surface energy balance over 45-year timescales.""")
-def helpbslne(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Baseline
-10 by Default; How many years the simulation has to remain at equilibrium before it is determined to be at balance
-(i.e., the amount of drift per year in the balance of incoming and outgoing energy has to remain below the threshold for this many years).""")
-def helpmxyr(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Maximum Year
-100 by Default; The maximum number of years for the simulation to run, even if it hasn’t reached balance by the end.""")
-def helpmnyr(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Minimum Year
-10 by Default; The minimum number of years for the simulation to run, even if it has reached balance by the end.""")
-def helpcrshibrkn(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Crash If Broken
-False by Default; This just helps make crashes a little more graceful and gives somewhat more useful error reports.""")
-def helpcln(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Clean
-False by Default; Deletes temporary files produced each year once an output has been created.
-Should help limit the amount of hard drive space used while running.""")
-def helpalrstrts(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: All Years
-False by Default; If set to True, moves the output files from every year of the model run; Otherwise, it only moves the final year.
-These output files can take up a good bit of hard drive space.
-
-Using this will one average together the data from multiple years when making a koppen map.""")
-def helpkprstrts(event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print("""Help: Keep Restarts
-False by Default; If set to True, moves the restart files—which can be used to restart and continue running the model—as well as the outputs.""")
 
 #Toggle Functions
 def tidaltoggle():
@@ -1171,6 +700,16 @@ default_font.configure(size=7)
 text_font = font.nametofont("TkTextFont")
 text_font.configure(size=7)
 
+
+#Status
+
+statusContainer = LabelFrame(master=window, relief=GROOVE,borderwidth=3, text="status")
+statusContainer.grid(padx=10, pady=10, row=5, column=1, columnspan=9, sticky=E+W+N+S)
+statusContainer.rowconfigure(0, weight=1)
+statusContainer.columnconfigure(0, weight=1)
+
+statusBox = Text(master=statusContainer)
+statusBox.grid( padx=3, pady=3, sticky=E+W+N+S)
 #------------------------------------------------------------------------------------------------------------ DONE
 #------------------------------------------------------------------------------------------------------------ DONE
 #------------------------------------------------------------------------------------------------------------ DONE
@@ -1193,7 +732,7 @@ modelparam.grid(row=0, column=1,columnspan=2,sticky="n")
 
 #Project Name
 project = Label(master=modpar_frame,text="Project Name: ",foreground=txtcol)
-project.bind("<Button-1>", helpjctnme)
+project.bind("<Motion>", lambda event: ht.helpTextTk("helpjctnme", statusBox , event))
 project.grid(row=1, column=1, sticky="w")
 name_var = StringVar()
 name_var.set('Earth')
@@ -1202,7 +741,7 @@ name.grid(row=1, column=2, sticky="w")
 
 #Start Year
 year = Label(master=modpar_frame,text="Start Year: ",foreground=txtcol)
-year.bind("<Button-1>", helpstrtyr)
+year.bind("<Motion>", lambda event: ht.helpTextTk("helpstrtyr", statusBox , event))
 year.grid(row=2, column=1, sticky="w")
 year_var = IntVar()
 year_var.set(1)
@@ -1211,7 +750,7 @@ year_n.grid(row=2, column=2, sticky="w")
 
 #Output Type
 outputtype = Label(master=modpar_frame,text="Output Type: ",foreground=txtcol)
-outputtype.bind("<Button-1>", helpotptype)
+outputtype.bind("<Motion>", lambda event: ht.helpTextTk("helpotptype", statusBox , event))
 outputtype.grid(row=3, column=1, sticky="w")
 output_options = [".nc", ".nc", ".npy", ".npz", ".hdf5", ".he5", ".h5", ".csv", ".gz", ".txt", ".tar", ".tar.gz", ".tar.xz", ".tar.bz2"]
 output_var = StringVar()
@@ -1222,7 +761,7 @@ outputtxt.grid(row=3,column=2, sticky="w")
 
 #CPU Count
 cpu = Label(master=modpar_frame,text="CPU Count: ",foreground=txtcol)
-cpu.bind("<Button-1>", helpcpucnt)
+cpu.bind("<Motion>", lambda event: ht.helpTextTk("helpcpucnt", statusBox , event))
 cpu.grid(row=4, column=1, sticky="w")
 cpu_var = IntVar()
 cpu_var.set(4)
@@ -1231,7 +770,7 @@ cpu_n.grid(row=4, column=2, sticky="w")
 
 #Precision
 pres = Label(master=modpar_frame,text="Precision: ",foreground=txtcol)
-pres.bind("<Button-1>", helpresision)
+pres.bind("<Motion>", lambda event: ht.helpTextTk("helpresision", statusBox , event))
 pres.grid(row=5, column=1, sticky="w")
 pres_options = ["8", "4", "8"]
 pres_var = StringVar()
@@ -1242,7 +781,7 @@ pres_n.grid(row=5, column=2, sticky="w")
 
 #Resolution
 resolution = Label(master=modpar_frame,text="Resolution: ",foreground=txtcol)
-resolution.bind("<Button-1>", helpresolution)
+resolution.bind("<Motion>", lambda event: ht.helpTextTk("helpresolution", statusBox , event))
 resolution.grid(row=6, column=1, sticky="w")
 res_options = ["T21", "T21", "T42", "T63", "T85", "T106", "T127", "T170"]
 res_var = StringVar()
@@ -1253,7 +792,7 @@ res.grid(row=6,column=2, sticky="w")
 
 #Crash Tolerant
 crash = resolution = Label(master=modpar_frame,text="Crash Tolerant: ",foreground=txtcol)
-crash.bind("<Button-1>", helpcrshtlrnt)
+crash.bind("<Motion>", lambda event: ht.helpTextTk("helpcrshtlrnt", statusBox , event))
 crash.grid(row=7, column=1, sticky="w")
 crash_var = StringVar()
 crash_var.set("False")
@@ -1262,7 +801,7 @@ crashtol.grid(row=7, column=2, sticky="w")
 
 #Layers
 layers = Label(master=modpar_frame,text="Layers: ",foreground=txtcol)
-layers.bind("<Button-1>", helplayers)
+layers.bind("<Motion>", lambda event: ht.helpTextTk("helplayers", statusBox , event))
 layers.grid(row=8, column=1, sticky="w")
 layers_var = IntVar()
 layers_var.set(10)
@@ -1271,7 +810,7 @@ layers_n.grid(row=8, column=2, sticky="w")
 
 #Recompile
 recom = resolution = Label(master=modpar_frame,text="Recompile: ",foreground=txtcol)
-recom.bind("<Button-1>", helprecompile)
+recom.bind("<Motion>", lambda event: ht.helpTextTk("helprecompile", statusBox , event))
 recom.grid(row=9, column=1, sticky="w")
 recom_var = StringVar()
 recom_var.set("False")
@@ -1292,7 +831,7 @@ modelparam.grid(row=0,column=1,columnspan=2,sticky="n")
 
 #Star Temperature
 startemp = Label(master=stelpar_frame,text="Star Temp. (K): ",foreground=txtcol)
-startemp.bind("<Button-1>", helpstrtmp)
+startemp.bind("<Motion>", lambda event: ht.helpTextTk("helpstrtmp", statusBox , event))
 startemp.grid(row=1, column=1, sticky="w")
 startemp_var = DoubleVar()
 startemp_var.set(5772.0)
@@ -1301,7 +840,7 @@ startemp_n.grid(row=1, column=2, sticky="w")
 
 #Stellar Flux
 flux = Label(master=stelpar_frame,text="Stellar Flux (W/m²): ",foreground=txtcol)
-flux.bind("<Button-1>", helpstlrflx)
+flux.bind("<Motion>", lambda event: ht.helpTextTk("helpstlrflx", statusBox , event))
 flux.grid(row=2, column=1, sticky="w")
 flux_var = DoubleVar()
 flux_var.set(1367.0)
@@ -1322,7 +861,7 @@ orbitparam.grid(row=0,column=1,columnspan=2,sticky="n")
 
 #Orbital Period
 orbp = Label(master=orbitpar_frame,text="Year Length (E. Days): ",foreground=txtcol)
-orbp.bind("<Button-1>", helpyrlngth)
+orbp.bind("<Motion>", lambda event: ht.helpTextTk("helpyrlngth", statusBox , event))
 orbp.grid(row=1, column=1, sticky="w")
 orbp_var = DoubleVar()
 orbp_var.set(365.25)
@@ -1331,7 +870,7 @@ orbp_n.grid(row=1, column=2, sticky="w")
 
 #Rotation Period
 rot = Label(master=orbitpar_frame,text="Day Length (E. Days): ",foreground=txtcol)
-rot.bind("<Button-1>", helpdaylngth)
+rot.bind("<Motion>", lambda event: ht.helpTextTk("helpdaylngth", statusBox , event))
 rot.grid(row=2, column=1, sticky="w")
 rot_var = DoubleVar()
 rot_var.set(1.0)
@@ -1340,7 +879,7 @@ rot_n.grid(row=2, column=2, sticky="w")
 
 #Eccentricity
 ecc = Label(master=orbitpar_frame,text="Eccentricity: ",foreground=txtcol)
-ecc.bind("<Button-1>", helpeccentr)
+ecc.bind("<Motion>", lambda event: ht.helpTextTk("helpeccentr", statusBox , event))
 ecc.grid(row=3, column=1, sticky="w")
 ecc_var = DoubleVar()
 ecc_var.set(0.016715)
@@ -1349,7 +888,7 @@ ecc_n.grid(row=3, column=2, sticky="w")
 
 #Obliquity
 obli = Label(master=orbitpar_frame,text="Obliquity (°): ",foreground=txtcol)
-obli.bind("<Button-1>", helpoblqty)
+obli.bind("<Motion>", lambda event: ht.helpTextTk("helpoblqty", statusBox , event))
 obli.grid(row=4, column=1, sticky="w")
 obli_var = DoubleVar()
 obli_var.set(23.441)
@@ -1358,7 +897,7 @@ obli_n.grid(row=4, column=2, sticky="w")
 
 #Longitude of Periapsis
 lon = Label(master=orbitpar_frame,text="Long. of Periapsis (°): ",foreground=txtcol)
-lon.bind("<Button-1>", helplngpri)
+lon.bind("<Motion>", lambda event: ht.helpTextTk("helplngpri", statusBox , event))
 lon.grid(row=5, column=1, sticky="w")
 lon_var = DoubleVar()
 lon_var.set(102.7)
@@ -1367,7 +906,7 @@ lon_n.grid(row=5, column=2, sticky="w")
 
 #Fixed Orbit
 fixed = Label(master=orbitpar_frame,text="Fixed Orbit: ",foreground=txtcol)
-fixed.bind("<Button-1>", helpfxdobt)
+fixed.bind("<Motion>", lambda event: ht.helpTextTk("helpfxdobt", statusBox , event))
 fixed.grid(row=6, column=1, sticky="w")
 fixed_var = StringVar()
 fixed_var.set('True')
@@ -1397,7 +936,7 @@ rotatparam.grid(row=0,column=1,columnspan=2,sticky="n")
 
 #Tidally Locked
 tidal = Label(master=rotatpar_frame,text="Tidally Locked: ",foreground=txtcol)
-tidal.bind("<Button-1>", helptdlkd)
+tidal.bind("<Motion>", lambda event: ht.helpTextTk("helptdlkd", statusBox , event))
 tidal.grid(row=1, column=1, sticky="w")
 tidal_var = StringVar()
 tidal_var.set('False')
@@ -1406,7 +945,7 @@ tidalock.grid(row=1, column=2, sticky="w")
 
 #Substellar Longitude
 stellon = Label(master=rotatpar_frame,text="Substellar Longitude (°): ",foreground=txtcol)
-stellon.bind("<Button-1>", helpsbstlrlng)
+stellon.bind("<Motion>", lambda event: ht.helpTextTk("helpsbstlrlng", statusBox , event))
 stellon.grid(row=2, column=1, sticky="w")
 stellon_var = DoubleVar()
 stellon_var.set(180)
@@ -1416,7 +955,7 @@ stellon_n.grid(row=2, column=2, sticky="w")
 
 #Desync
 desync = Label(master=rotatpar_frame,text="Substellar Desync (°/min): ",foreground=txtcol)
-desync.bind("<Button-1>", helpsbstlrdsync)
+desync.bind("<Motion>", lambda event: ht.helpTextTk("helpsbstlrdsync", statusBox , event))
 desync.grid(row=3, column=1, sticky="w")
 desync_var = DoubleVar()
 desync_var.set(0.0)
@@ -1426,7 +965,7 @@ desync_n.grid(row=3, column=2, sticky="w")
 
 #Temp. Contrast
 tempcon = Label(master=rotatpar_frame,text="Temp. Contrast (K): ",foreground=txtcol)
-tempcon.bind("<Button-1>", helptmpcntrst)
+tempcon.bind("<Motion>", lambda event: ht.helpTextTk("helptmpcntrst", statusBox , event))
 tempcon.grid(row=4, column=1, sticky="w")
 tempcon_var = DoubleVar()
 tempcon_var.set(0.0)
@@ -1449,7 +988,7 @@ planetparam.grid(row=0,column=1,columnspan=2,sticky="n")
 
 #Surface Gravity
 gravity = Label(master=planetpar_frame,text="Gravity (m/s²): ",foreground=txtcol)
-gravity.bind("<Button-1>", helpgrvty)
+gravity.bind("<Motion>", lambda event: ht.helpTextTk("helpgrvty", statusBox , event))
 gravity.grid(row=1, column=1, sticky="w")
 gravity_var = DoubleVar()
 gravity_var.set(9.80665)
@@ -1458,7 +997,7 @@ gravity_n.grid(row=1, column=2, sticky="w")
 
 #Radius
 radius = Label(master=planetpar_frame,text="Radius (E. Radii): ",foreground=txtcol)
-radius.bind("<Button-1>", helprdus)
+radius.bind("<Motion>", lambda event: ht.helpTextTk("helprdus", statusBox , event))
 radius.grid(row=2, column=1, sticky="w")
 radius_var = DoubleVar()
 radius_var.set(1.0)
@@ -1467,7 +1006,7 @@ radius_n.grid(row=2, column=2, sticky="w")
 
 #Orography
 orogph = Label(master=planetpar_frame,text="Orography: ",foreground=txtcol)
-orogph.bind("<Button-1>", helporgrphy)
+orogph.bind("<Motion>", lambda event: ht.helpTextTk("helporgrphy", statusBox , event))
 orogph.grid(row=3, column=1, sticky="w")
 orogph_var = DoubleVar()
 orogph_var.set(1.0)
@@ -1476,7 +1015,7 @@ orogph_n.grid(row=3, column=2, sticky="w")
 
 #Aqua Planet
 aquap = Label(master=planetpar_frame,text="Aqua Planet: ",foreground=txtcol)
-aquap.bind("<Button-1>", helpaquaplnt)
+aquap.bind("<Motion>", lambda event: ht.helpTextTk("helpaquaplnt", statusBox , event))
 aquap.grid(row=4, column=1, sticky="w")
 aquap_var = StringVar()
 aquap_var.set('False')
@@ -1486,7 +1025,7 @@ aquap_n.grid(row=4, column=2, sticky="w")
 
 #Desert Planet
 desertp = Label(master=planetpar_frame,text="Desert Planet: ",foreground=txtcol)
-desertp.bind("<Button-1>", helpdsrtplnt)
+desertp.bind("<Motion>", lambda event: ht.helpTextTk("helpdsrtplnt", statusBox , event))
 desertp.grid(row=5, column=1, sticky="w")
 desertp_var = StringVar()
 desertp_var.set('False')
@@ -1508,7 +1047,7 @@ vegparam.grid(row=0,column=1,columnspan=2,sticky="n")
 
 #Vegetation
 vegetat = Label(master=vegpar_frame,text="Vegetation: ",foreground=txtcol)
-vegetat.bind("<Button-1>", helpvgtn)
+vegetat.bind("<Motion>", lambda event: ht.helpTextTk("helpvgtn", statusBox , event))
 vegetat.grid(row=1, column=1, sticky="w")
 vegetat_options = ["None", "None", "Proscribed", "Dynamic"]
 vegetat_var = StringVar()
@@ -1519,7 +1058,7 @@ vegetat_n.grid(row=1, column=2, sticky="w")
 
 #Veg. Acceleration
 vegacce = Label(master=vegpar_frame,text="Veg. Acceleration: ",foreground=txtcol)
-vegacce.bind("<Button-1>", helpvgaclrtn)
+vegacce.bind("<Motion>", lambda event: ht.helpTextTk("helpvgaclrtn", statusBox , event))
 vegacce.grid(row=2, column=1, sticky="w")
 vegacce_var = IntVar()
 vegacce_var.set(1)
@@ -1529,7 +1068,7 @@ vegacce_n.grid(row=2, column=2, sticky="w")
 
 #Biomass Growth
 nfrtgrw = Label(master=vegpar_frame,text="Biomass Growth: ",foreground=txtcol)
-nfrtgrw.bind("<Button-1>", helpbiomsgrwth)
+nfrtgrw.bind("<Motion>", lambda event: ht.helpTextTk("helpbiomsgrwth", statusBox , event))
 nfrtgrw.grid(row=3, column=1, sticky="w")
 nfrtgrw_var = DoubleVar()
 nfrtgrw_var.set(1.0)
@@ -1539,7 +1078,7 @@ nfrtgrw_n.grid(row=3, column=2, sticky="w")
 
 #Initial Growth
 initgrw = Label(master=vegpar_frame,text="Initial Growth: ",foreground=txtcol)
-initgrw.bind("<Button-1>", helpintlgrth)
+initgrw.bind("<Motion>", lambda event: ht.helpTextTk("helpintlgrth", statusBox , event))
 initgrw.grid(row=4, column=1, sticky="w")
 initgrw_var = DoubleVar()
 initgrw_var.set(0.5)
@@ -1549,7 +1088,7 @@ initgrw_n.grid(row=4, column=2, sticky="w")
 
 #Initial Stomatal Conductance
 initstcd = Label(master=vegpar_frame,text="Stomatal Conductance: ",foreground=txtcol)
-initstcd.bind("<Button-1>", helpstmtlcndtnce)
+initstcd.bind("<Motion>", lambda event: ht.helpTextTk("helpstmtlcndtnce", statusBox , event))
 initstcd.grid(row=5, column=1, sticky="w")
 initstcd_var = DoubleVar()
 initstcd_var.set(1.0)
@@ -1559,7 +1098,7 @@ initstcd_n.grid(row=5, column=2, sticky="w")
 
 #Initial Vegetative Surface Roughness
 initrgh = Label(master=vegpar_frame,text="Vegetation Roughness: ",foreground=txtcol)
-initrgh.bind("<Button-1>", helpvgtnrghns)
+initrgh.bind("<Motion>", lambda event: ht.helpTextTk("helpvgtnrghns", statusBox , event))
 initrgh.grid(row=6, column=1, sticky="w")
 initrgh_var = DoubleVar()
 initrgh_var.set(2.0)
@@ -1569,7 +1108,7 @@ initrgh_n.grid(row=6, column=2, sticky="w")
 
 #Initial Soil Carbon Content
 initslc = Label(master=vegpar_frame,text="Soil Carbon Content: ",foreground=txtcol)
-initslc.bind("<Button-1>", helpslcbncntnt)
+initslc.bind("<Motion>", lambda event: ht.helpTextTk("helpslcbncntnt", statusBox , event))
 initslc.grid(row=7, column=1, sticky="w")
 initslc_var = DoubleVar()
 initslc_var.set(0.0)
@@ -1579,7 +1118,7 @@ initslc_n.grid(row=7, column=2, sticky="w")
 
 #Initial Vegetative Carbon Content
 initplc = Label(master=vegpar_frame,text="Plant Carbon Content: ",foreground=txtcol)
-initplc.bind("<Button-1>", helplntcbncntnt)
+initplc.bind("<Motion>", lambda event: ht.helpTextTk("helplntcbncntnt", statusBox , event))
 initplc.grid(row=8, column=1, sticky="w")
 initplc_var = DoubleVar()
 initplc_var.set(0.0)
@@ -1609,7 +1148,7 @@ surfparam.grid(row=0,column=1,columnspan=3,sticky="n")
 
 #Wet Soil
 wetso = Label(master=surfpar_frame,text="Wet Soil: ",foreground=txtcol)
-wetso.bind("<Button-1>", helpwtsl)
+wetso.bind("<Motion>", lambda event: ht.helpTextTk("helpwtsl", statusBox , event))
 wetso.grid(row=1, column=1, sticky="w")
 wetso_var = StringVar()
 wetso_var.set("False")
@@ -1618,7 +1157,7 @@ wetsoil.grid(row=1, column=2, sticky="w")
 
 #Soil Albedo
 soilalb = Label(master=surfpar_frame,text="Soil Albedo: ",foreground=txtcol)
-soilalb.bind("<Button-1>", helpslalbdo)
+soilalb.bind("<Motion>", lambda event: ht.helpTextTk("helpslalbdo", statusBox , event))
 soilalb.grid(row=2, column=1, sticky="w")
 soilalb_var = DoubleVar()
 soilalb_n = Entry(master=surfpar_frame,textvariable=soilalb_var, width=7)
@@ -1632,7 +1171,7 @@ soilalbtog_n.grid(row=2, column=3, sticky="w")
 
 #Soil Depth
 soildepth = Label(master=surfpar_frame,text="Soil Depth (m): ",foreground=txtcol)
-soildepth.bind("<Button-1>", helpsldpth)
+soildepth.bind("<Motion>", lambda event: ht.helpTextTk("helpsldpth", statusBox , event))
 soildepth.grid(row=3, column=1, sticky="w")
 soildepth_var = DoubleVar()
 soildepth_var.set(12.4)
@@ -1647,7 +1186,7 @@ soildepthtog_n.grid(row=3, column=3, sticky="w")
 
 #Soil Heat Capacity
 capsoil = Label(master=surfpar_frame,text="Soil Heat Capacity: ",foreground=txtcol)
-capsoil.bind("<Button-1>", helpslhtcpsty)
+capsoil.bind("<Motion>", lambda event: ht.helpTextTk("helpslhtcpsty", statusBox , event))
 capsoil.grid(row=4, column=1, sticky="w")
 capsoil_var = DoubleVar()
 capsoil_var.set(2.4)
@@ -1662,7 +1201,7 @@ capsoiltog_n.grid(row=4, column=3, sticky="w")
 
 #Soil Water Capacity
 soilwcp = Label(master=surfpar_frame,text="Soil Water Capacity: ",foreground=txtcol)
-soilwcp.bind("<Button-1>", helpslwtrcpsty)
+soilwcp.bind("<Motion>", lambda event: ht.helpTextTk("helpslwtrcpsty", statusBox , event))
 soilwcp.grid(row=5, column=1, sticky="w")
 soilwcp_var = DoubleVar()
 soilwcp_var.set(0.5)
@@ -1677,7 +1216,7 @@ soilwcptog_n.grid(row=5, column=3, sticky="w")
 
 #Soil Saturation
 soilsat = Label(master=surfpar_frame,text="Soil Saturation: ",foreground=txtcol)
-soilsat.bind("<Button-1>", helpslstrtn)
+soilsat.bind("<Motion>", lambda event: ht.helpTextTk("helpslstrtn", statusBox , event))
 soilsat.grid(row=6, column=1, sticky="w")
 soilsat_var = DoubleVar()
 soilsat_var.set(0.0)
@@ -1692,7 +1231,7 @@ soilsattog_n.grid(row=6, column=3, sticky="w")
 
 #Snow Albedo
 snowalb = Label(master=surfpar_frame,text="Snow Albedo: ",foreground=txtcol)
-snowalb.bind("<Button-1>", helpsnwalb)
+snowalb.bind("<Motion>", lambda event: ht.helpTextTk("helpsnwalb", statusBox , event))
 snowalb.grid(row=7, column=1, sticky="w")
 snowalb_var = DoubleVar()
 snowalb_n = Entry(master=surfpar_frame,textvariable=snowalb_var, width=7)
@@ -1706,7 +1245,7 @@ snowalbtog_n.grid(row=7, column=3, sticky="w")
 
 #Max Snow
 mxsnow = Label(master=surfpar_frame,text="Max Snow (m): ",foreground=txtcol)
-mxsnow.bind("<Button-1>", helpmxsnw)
+mxsnow.bind("<Motion>", lambda event: ht.helpTextTk("helpmxsnw", statusBox , event))
 mxsnow.grid(row=8, column=1, sticky="w")
 mxsnow_var = DoubleVar()
 mxsnow_var.set(5.0)
@@ -1721,7 +1260,7 @@ mxsnowtog_n.grid(row=8, column=3, sticky="w")
 
 #Sea Ice
 seaice = Label(master=surfpar_frame,text="Sea Ice: ",foreground=txtcol)
-seaice.bind("<Button-1>", helpseaice)
+seaice.bind("<Motion>", lambda event: ht.helpTextTk("helpseaice", statusBox , event))
 seaice.grid(row=9, column=1, sticky="w")
 seaice_var = StringVar()
 seaice_var.set('True')
@@ -1730,7 +1269,7 @@ seaice_n.grid(row=9, column=2, sticky="w")
 
 #Ocean Albedo
 oceanalb = Label(master=surfpar_frame,text="Ocean Albedo: ",foreground=txtcol)
-oceanalb.bind("<Button-1>", helpocnalb)
+oceanalb.bind("<Motion>", lambda event: ht.helpTextTk("helpocnalb", statusBox , event))
 oceanalb.grid(row=10, column=1, sticky="w")
 oceanalb_var = DoubleVar()
 oceanalb_n = Entry(master=surfpar_frame,textvariable=snowalb_var, width=7)
@@ -1744,7 +1283,7 @@ oceanalbtog_n.grid(row=10, column=3, sticky="w")
 
 #Mixed Ocean Depth
 mldepth = Label(master=surfpar_frame,text="Mixed Layer Depth (m): ",foreground=txtcol)
-mldepth.bind("<Button-1>", helpmxdlyrdpth)
+mldepth.bind("<Motion>", lambda event: ht.helpTextTk("helpmxdlyrdpth", statusBox , event))
 mldepth.grid(row=11, column=1, sticky="w")
 mldepth_var = DoubleVar()
 mldepth_var.set(50.0)
@@ -1759,7 +1298,7 @@ mldepthtog_n.grid(row=11, column=3, sticky="w")
 
 #Ocean Zenith
 oceanzen = Label(master=surfpar_frame,text="Ocean Zenith: ",foreground=txtcol)
-oceanzen.bind("<Button-1>", helpocnznth)
+oceanzen.bind("<Motion>", lambda event: ht.helpTextTk("helpocnznth", statusBox , event))
 oceanzen.grid(row=12, column=1, sticky="w")
 oceanzen_options = ["ECHAM-3", "Lambertian", "uniform", "ECHAM-3", "plasim", "default", "ECHAM-6"]
 oceanzen_var = StringVar()
@@ -1782,7 +1321,7 @@ geoparam.grid(row=0,column=1,columnspan=3,sticky="n")
 
 #Image/SRA Toggle
 imgsratog = Label(master=geopar_frame,text="Image/SRA Toggle: ",foreground=txtcol)
-imgsratog.bind("<Button-1>", helpimgsratog)
+imgsratog.bind("<Motion>", lambda event: ht.helpTextTk("helpimgsratog", statusBox , event))
 imgsratog.grid(row=1, column=1, sticky="w")
 imgsratogtog_var = StringVar()
 imgsratogtog_var.set('False')
@@ -1791,7 +1330,7 @@ imgsratogtog_n.grid(row=1, column=2, sticky="w")
 
 #Height Map Image
 hghtmpimg = Label(master=geopar_frame,text="Height Map Image: ",foreground=txtcol)
-hghtmpimg.bind("<Button-1>", helphghtmpimg)
+hghtmpimg.bind("<Motion>", lambda event: ht.helpTextTk("helphghtmpimg", statusBox , event))
 hghtmpimg.grid(row=2, column=1, sticky="w")
 hghtmpimg_var = StringVar()
 hghtmpimg_n = Entry(master=geopar_frame,textvariable=hghtmpimg_var, width=7)
@@ -1803,7 +1342,7 @@ hghtmpimg_b.grid(row=2, column=3, sticky="w")
 
 #Water Threshold
 waterhres = Label(master=geopar_frame,text="Water Threshold: ",foreground=txtcol)
-waterhres.bind("<Button-1>", helpwtrthrshld)
+waterhres.bind("<Motion>", lambda event: ht.helpTextTk("helpwtrthrshld", statusBox , event))
 waterhres.grid(row=3, column=1, sticky="w")
 waterhres_var = IntVar()
 waterhres_var.set(0)
@@ -1813,7 +1352,7 @@ waterhres_n.grid(row=3, column=2, sticky="w")
 
 #Highest Elevation
 highelev = Label(master=geopar_frame,text="Highest Elevation (m): ",foreground=txtcol)
-highelev.bind("<Button-1>", helphghstelvtn)
+highelev.bind("<Motion>", lambda event: ht.helpTextTk("helphghstelvtn", statusBox , event))
 highelev.grid(row=4, column=1, sticky="w")
 highelev_var = DoubleVar()
 highelev_var.set(8849.0)
@@ -1823,7 +1362,7 @@ highelev_n.grid(row=4, column=2, sticky="w")
 
 #Lowest Elevation
 lowelev = Label(master=geopar_frame,text="Lowest Elevation (m): ",foreground=txtcol)
-lowelev.bind("<Button-1>", helplwstelvtn)
+lowelev.bind("<Motion>", lambda event: ht.helpTextTk("helplwstelvtn", statusBox , event))
 lowelev.grid(row=5, column=1, sticky="w")
 lowelev_var = DoubleVar()
 lowelev_var.set(-11034.0)
@@ -1833,7 +1372,7 @@ lowelev_n.grid(row=5, column=2, sticky="w")
 
 #Image Debug
 imgdebug = Label(master=geopar_frame,text="Image Debug: ",foreground=txtcol)
-imgdebug.bind("<Button-1>", helpimgdbg)
+imgdebug.bind("<Motion>", lambda event: ht.helpTextTk("helpimgdbg", statusBox , event))
 imgdebug.grid(row=6, column=1, sticky="w")
 imgdebugtog_var = StringVar()
 imgdebugtog_var.set('False')
@@ -1843,7 +1382,7 @@ imgdebugtog_n.grid(row=6, column=2, sticky="w")
 
 #SRA Name
 sranme = Label(master=geopar_frame,text="SRA Name: ",foreground=txtcol)
-sranme.bind("<Button-1>", helpsranme)
+sranme.bind("<Motion>", lambda event: ht.helpTextTk("helpsranme", statusBox , event))
 sranme.grid(row=7, column=1, sticky="w")
 sranme_var = StringVar()
 sranme_var.set("earth")
@@ -1853,7 +1392,7 @@ sranme_n.grid(row=7, column=2, sticky="w")
 
 #Land SRA
 lndsra = Label(master=geopar_frame,text="Land SRA: ",foreground=txtcol)
-lndsra.bind("<Button-1>", helplndsra)
+lndsra.bind("<Motion>", lambda event: ht.helpTextTk("helplndsra", statusBox , event))
 lndsra.grid(row=8, column=1, sticky="w")
 lndsra_var = StringVar()
 lndsra_n = Entry(master=geopar_frame,textvariable=lndsra_var, width=7)
@@ -1865,7 +1404,7 @@ lndsra_b.grid(row=8, column=3, sticky="w")
 
 #Topo SRA
 tposra = Label(master=geopar_frame,text="Topographic SRA: ",foreground=txtcol)
-tposra.bind("<Button-1>", helptposra)
+tposra.bind("<Motion>", lambda event: ht.helpTextTk("helptposra", statusBox , event))
 tposra.grid(row=9, column=1, sticky="w")
 tposra_var = StringVar()
 tposra_n = Entry(master=geopar_frame,textvariable=tposra_var, width=7)
@@ -1897,7 +1436,7 @@ atmparam.grid(row=0,column=1,columnspan=3,sticky="n")
 
 #Pressure
 pressure = Label(master=atmpar_frame,text="Pressure (bar): ",foreground=txtcol)
-pressure.bind("<Button-1>", helprsure)
+pressure.bind("<Motion>", lambda event: ht.helpTextTk("helprsure", statusBox , event))
 pressure.grid(row=1, column=1, sticky="w")
 pressure_var = DoubleVar()
 pressure_var.set(1.0)
@@ -1912,7 +1451,7 @@ pressuretog_n.grid(row=1, column=3, sticky="w")
 
 #Gas Constant
 gascon = Label(master=atmpar_frame,text="Gas Constant: ",foreground=txtcol)
-gascon.bind("<Button-1>", helpgscnstnt)
+gascon.bind("<Motion>", lambda event: ht.helpTextTk("helpgscnstnt", statusBox , event))
 gascon.grid(row=2, column=1, sticky="w")
 gascon_var = DoubleVar()
 gascon_var.set(287.0)
@@ -1927,7 +1466,7 @@ gascontog_n.grid(row=2, column=3, sticky="w")
 
 #Dry Core
 drycore = Label(master=atmpar_frame,text="Dry Core: ",foreground=txtcol)
-drycore.bind("<Button-1>", helpdrycre)
+drycore.bind("<Motion>", lambda event: ht.helpTextTk("helpdrycre", statusBox , event))
 drycore.grid(row=3, column=1, sticky="w")
 drycoretog_var = StringVar()
 drycoretog_var.set('False')
@@ -1936,7 +1475,7 @@ drycoretog_n.grid(row=3, column=2, sticky="w")
 
 #Ozone
 ozone = Label(master=atmpar_frame,text="Ozone: ",foreground=txtcol)
-ozone.bind("<Button-1>", helpozne)
+ozone.bind("<Motion>", lambda event: ht.helpTextTk("helpozne", statusBox , event))
 ozone.grid(row=4, column=1, sticky="w")
 ozone_var = StringVar()
 ozone_var.set('False')
@@ -1945,7 +1484,7 @@ ozone_n.grid(row=4, column=2, sticky="w")
 
 #Partial Pressure
 partialp = Label(master=atmpar_frame,text="Gas Pressure (bar): ",foreground=txtcol)
-partialp.bind("<Button-1>", helpgsprsurs)
+partialp.bind("<Motion>", lambda event: ht.helpTextTk("helpgsprsurs", statusBox , event))
 partialp.grid(row=5, column=1, sticky="w")
 partialptog_var = StringVar()
 partialptog_var.set('False')
@@ -2048,7 +1587,7 @@ glacparam.grid(row=0,column=1,columnspan=3, sticky="n")
 
 #Glacier Toggle
 glacial = Label(master=glacpar_frame,text="Glaciers: ",foreground=txtcol)
-glacial.bind("<Button-1>", helpglcrs)
+glacial.bind("<Motion>", lambda event: ht.helpTextTk("helpglcrs", statusBox , event))
 glacial.grid(row=1, column=1, sticky="w")
 glacialtog_var = StringVar()
 glacialtog_var.set('False')
@@ -2057,7 +1596,7 @@ glacialtog_n.grid(row=1, column=2, sticky="w")
 
 #Initial Height
 inith = Label(master=glacpar_frame,text="Height (m): ",foreground=txtcol)
-inith.bind("<Button-1>", helpgrhght)
+inith.bind("<Motion>", lambda event: ht.helpTextTk("helpgrhght", statusBox , event))
 inith.grid(row=2, column=1, sticky="w")
 inith_var = DoubleVar()
 inith_var.set(0.0)
@@ -2067,7 +1606,7 @@ inith_n.grid(row=2, column=2, sticky="w")
 
 #Minimum Snow Depth
 mndph = Label(master=glacpar_frame,text="Threshold (m): ",foreground=txtcol)
-mndph.bind("<Button-1>", helpgrthrshld)
+mndph.bind("<Motion>", lambda event: ht.helpTextTk("helpgrthrshld", statusBox , event))
 mndph.grid(row=3, column=1, sticky="w")
 mndph_var = DoubleVar()
 mndph_var.set(2.0)
@@ -2097,7 +1636,7 @@ mdldynparam.grid(row=0,column=1,columnspan=2,sticky="n")
 
 #Timestep
 tmestp = Label(master=mdldynpar_frame,text="Timestep (min): ",foreground=txtcol)
-tmestp.bind("<Button-1>", helptimestep)
+tmestp.bind("<Motion>", lambda event: ht.helpTextTk("helptimestep", statusBox , event))
 tmestp.grid(row=1, column=1, sticky="w")
 tmestp_var = DoubleVar()
 tmestp_var.set(45.0)
@@ -2106,7 +1645,7 @@ tmestp_n.grid(row=1, column=2, sticky="w")
 
 #Runsteps
 runstp = Label(master=mdldynpar_frame,text="Runsteps: ",foreground=txtcol)
-runstp.bind("<Button-1>", helprunsteps)
+runstp.bind("<Motion>", lambda event: ht.helpTextTk("helprunsteps", statusBox , event))
 runstp.grid(row=2, column=1, sticky="w")
 runstp_var = IntVar()
 runstp_var.set(11520)
@@ -2115,7 +1654,7 @@ runstp_n.grid(row=2, column=2, sticky="w")
 
 #Snapshots
 snpsht = Label(master=mdldynpar_frame,text="Snapshots: ",foreground=txtcol)
-snpsht.bind("<Button-1>", helpsnapshots)
+snpsht.bind("<Motion>", lambda event: ht.helpTextTk("helpsnapshots", statusBox , event))
 snpsht.grid(row=3, column=1, sticky="w")
 snpsht_var = IntVar()
 snpsht_var.set(0)
@@ -2124,7 +1663,7 @@ snpsht_n.grid(row=3, column=2, sticky="w")
 
 #NSTPW
 nsptw = Label(master=mdldynpar_frame,text="NSTPW: ",foreground=txtcol)
-nsptw.bind("<Button-1>", helpnstpw)
+nsptw.bind("<Motion>", lambda event: ht.helpTextTk("helpnstpw", statusBox , event))
 nsptw.grid(row=4, column=1, sticky="w")
 nsptw_var = IntVar()
 nsptw_var.set(160)
@@ -2133,7 +1672,7 @@ nsptw_n.grid(row=4, column=2, sticky="w")
 
 #Physics Filter 1
 phyfilt1 = Label(master=mdldynpar_frame,text="Physics Filter: ",foreground=txtcol)
-phyfilt1.bind("<Button-1>", helphysfltr)
+phyfilt1.bind("<Motion>", lambda event: ht.helpTextTk("helphysfltr", statusBox , event))
 phyfilt1.grid(row=5, column=1, sticky="w")
 phyfilt1_options = ["None", "None", "Cesaro", "Exp", "Lh"]
 phyfilt1_var = StringVar()
@@ -2144,7 +1683,7 @@ phyfilt1_n.grid(row=5,column=2, sticky="w")
 
 #Physics Filter 2
 phyfilt2 = Label(master=mdldynpar_frame,text="Filter Application: ",foreground=txtcol)
-phyfilt2.bind("<Button-1>", helpfltrapp)
+phyfilt2.bind("<Motion>", lambda event: ht.helpTextTk("helpfltrapp", statusBox , event))
 phyfilt2.grid(row=6, column=1, sticky="w")
 phyfilt2_options = ["None", "None", "GP", "SP", "GP + SP"]
 phyfilt2_var = StringVar()
@@ -2155,7 +1694,7 @@ phyfilt2_n.grid(row=6,column=2, sticky="w")
 
 #Storm Climatology
 stormcl = Label(master=mdldynpar_frame,text="Storm Climatology: ",foreground=txtcol)
-stormcl.bind("<Button-1>", helpstmclmtlgy)
+stormcl.bind("<Motion>", lambda event: ht.helpTextTk("helpstmclmtlgy", statusBox , event))
 stormcl.grid(row=7, column=1, sticky="w")
 stormcltog_var = StringVar()
 stormcltog_var.set('False')
@@ -2164,7 +1703,7 @@ stormcltog_n.grid(row=7, column=2, sticky="w")
 
 #High Cadence
 highcad = Label(master=mdldynpar_frame,text="High Cadence: ",foreground=txtcol)
-highcad.bind("<Button-1>", helphghcdnce)
+highcad.bind("<Motion>", lambda event: ht.helpTextTk("helphghcdnce", statusBox , event))
 highcad.grid(row=8, column=1, sticky="w")
 highcadtog_var = StringVar()
 highcadtog_var.set('False')
@@ -2174,7 +1713,7 @@ highcadtog_n.grid(row=8, column=2, sticky="w")
 
 #Run To Balance
 rntbal = Label(master=mdldynpar_frame,text="Run To Balance: ",foreground=txtcol)
-rntbal.bind("<Button-1>", helprntbal)
+rntbal.bind("<Motion>", lambda event: ht.helpTextTk("helprntbal", statusBox , event))
 rntbal.grid(row=9, column=1, sticky="w")
 rntbaltog_var = StringVar()
 rntbaltog_var.set('False')
@@ -2183,7 +1722,7 @@ rntbaltog_n.grid(row=9, column=2, sticky="w")
 
 #Run Time
 runtme = Label(master=mdldynpar_frame,text="Run Time (years): ",foreground=txtcol)
-runtme.bind("<Button-1>", helprntme)
+runtme.bind("<Motion>", lambda event: ht.helpTextTk("helprntme", statusBox , event))
 runtme.grid(row=10, column=1, sticky="w")
 runtme_var = IntVar()
 runtme_var.set(100)
@@ -2192,7 +1731,7 @@ runtme_n.grid(row=10, column=2, sticky="w")
 
 #Threshold
 trshld = Label(master=mdldynpar_frame,text="Threshold: ",foreground=txtcol)
-trshld.bind("<Button-1>", helpthrshld)
+trshld.bind("<Motion>", lambda event: ht.helpTextTk("helpthrshld", statusBox , event))
 trshld.grid(row=11, column=1, sticky="w")
 trshld_var = DoubleVar()
 trshld_var.set(0.0005)
@@ -2202,7 +1741,7 @@ trshld_n.grid(row=11, column=2, sticky="w")
 
 #Baseline
 bselne = Label(master=mdldynpar_frame,text="Baseline (years): ",foreground=txtcol)
-bselne.bind("<Button-1>", helpbslne)
+bselne.bind("<Motion>", lambda event: ht.helpTextTk("helpbslne", statusBox , event))
 bselne.grid(row=12, column=1, sticky="w")
 bselne_var = IntVar()
 bselne_var.set(10)
@@ -2212,7 +1751,7 @@ bselne_n.grid(row=12, column=2, sticky="w")
 
 #Max Years
 maxyr = Label(master=mdldynpar_frame,text="Max. Year (years): ",foreground=txtcol)
-maxyr.bind("<Button-1>", helpmxyr)
+maxyr.bind("<Motion>", lambda event: ht.helpTextTk("helpmxyr", statusBox , event))
 maxyr.grid(row=13, column=1, sticky="w")
 maxyr_var = IntVar()
 maxyr_var.set(100)
@@ -2222,7 +1761,7 @@ maxyr_n.grid(row=13, column=2, sticky="w")
 
 #Min Years
 minyr = Label(master=mdldynpar_frame,text="Min. Year (years): ",foreground=txtcol)
-minyr.bind("<Button-1>", helpmnyr)
+minyr.bind("<Motion>", lambda event: ht.helpTextTk("helpmnyr", statusBox , event))
 minyr.grid(row=14, column=1, sticky="w")
 minyr_var = IntVar()
 minyr_var.set(10)
@@ -2232,7 +1771,7 @@ minyr_n.grid(row=14, column=2, sticky="w")
 
 #Crash If Broken
 cshibrk = Label(master=mdldynpar_frame,text="Crash if Broken: ",foreground=txtcol)
-cshibrk.bind("<Button-1>", helpcrshibrkn)
+cshibrk.bind("<Motion>", lambda event: ht.helpTextTk("helpcrshibrkn", statusBox , event))
 cshibrk.grid(row=15, column=1, sticky="w")
 cshibrktog_var = StringVar()
 cshibrktog_var.set('False')
@@ -2241,7 +1780,7 @@ cshibrktog_n.grid(row=15, column=2, sticky="w")
 
 #Clean
 clean = Label(master=mdldynpar_frame,text="Clean: ",foreground=txtcol)
-clean.bind("<Button-1>", helpcln)
+clean.bind("<Motion>", lambda event: ht.helpTextTk("helpcln", statusBox , event))
 clean.grid(row=16, column=1, sticky="w")
 cleantog_var = StringVar()
 cleantog_var.set('False')
@@ -2250,7 +1789,7 @@ cleantog_n.grid(row=16, column=2, sticky="w")
 
 #All Years
 allyrs = Label(master=mdldynpar_frame,text="All Years: ",foreground=txtcol)
-allyrs.bind("<Button-1>", helpalrstrts)
+allyrs.bind("<Motion>", lambda event: ht.helpTextTk("helpalrstrts", statusBox , event))
 allyrs.grid(row=17, column=1, sticky="w")
 allyrstog_var = StringVar()
 allyrstog_var.set('False')
@@ -2259,7 +1798,7 @@ allyrstog_n.grid(row=17, column=2, sticky="w")
 
 #Keep Restarts
 kprsts = Label(master=mdldynpar_frame,text="Keep Restarts: ",foreground=txtcol)
-kprsts.bind("<Button-1>", helpkprstrts)
+kprsts.bind("<Motion>", lambda event: ht.helpTextTk("helpkprstrts", statusBox , event))
 kprsts.grid(row=18, column=1, sticky="w")
 kprststog_var = StringVar()
 kprststog_var.set('False')
@@ -2281,5 +1820,6 @@ output = Label(text="Output")
 output.grid(row=3, column=9, sticky="n")
 save = Button(text="Save", command=save_file)
 save.grid(row=4, column=9, sticky="n")
+
 
 window.mainloop()
