@@ -1,16 +1,8 @@
-import sys
 import os
 from os import path
 import numpy as np
 from matplotlib.image import imread
 from PIL import Image, ImageOps
-import shutil
-import ntpath
-from tkinter import *
-from tkinter import font
-from tkinter import messagebox
-from tkinter.ttk import *
-from tkinter.filedialog import askopenfilename, asksaveasfilename
 
 def writeSRA(path,name,kcode,fmap,NLAT,NLON): #Format array and header into sra file, as well as saving it!
     """Write a lat-lon field to a formatted .sra file."""

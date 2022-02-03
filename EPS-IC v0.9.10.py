@@ -1,4 +1,3 @@
-from lib2to3.pytree import convert
 import sys
 import os
 from os import path
@@ -834,62 +833,6 @@ def system_check():
     else:
         print("WARNING: Current day length places ratio between (day*1440) and timestep at "+str(day_check1)+" which may cause problems with ExoPlaSim.")
         print("Changing this to an integer will work better.")
-
-def writeSRA(path,name,kcode,fmap,NLAT,NLON): #Format array and header into sra file, as well as saving it!
-    """Write a lat-lon field to a formatted .sra file."""
-    try:
-        os.makedirs(path)
-    except FileExistsError:
-        # directory already exists
-        pass
-    sra_label=path+name+'_surf_%04d.sra'%kcode
-    sra_header=[kcode,0,11111111,0,NLON,NLAT,0,0]
-    sheader = ''
-    for h in sra_header:
-        sheader+=" %9d"%h
-    lines=[]
-    i=0
-    while i<NLAT*NLON/8:
-        l=''
-        for n in fmap[i,:]:
-            l+=' %9.3f'%n
-        lines.append(l)
-        i+=1
-    sra_text=sheader+'\n'+'\n'.join(lines)
-    with open(sra_label, "w") as f:
-        #f=open(sra_label,'w')
-        f.write(sra_text)
-        f.close()
-
-def chunk(arr, nrows, ncols): #Split an array into chunks
-    '''
-    Return an array of shape (n, nrows, ncols) where
-    n * nrows * ncols = arr.size
-
-    If arr is a 2D array, the returned array should look like n subblocks with
-    each subblock preserving the "physical" layout of arr.
-    '''
-    h, w = arr.shape
-    assert h % nrows == 0, "{} rows is not evenly divisble by {}".format(h, nrows)
-    assert w % ncols == 0, "{} cols is not evenly divisble by {}".format(w, ncols)
-    return (arr.reshape(h//nrows, nrows, -1, ncols)
-               .swapaxes(1,2)
-               .reshape(-1, nrows, ncols))
-
-def color_ocean(inarray, outlist, w, h): #turn 0/1 array to black/white (ocean/land) array
-	for y in range(w):
-		for x in range(h):
-			col = inarray[x,y]
-			if col > 0:
-				rgb = (int(col*255),int(col*255),int(col*255))
-			else:
-				rgb = (0,0,0)
-			outlist.append(rgb)
-def color_land(inarray, outlist, w, h): #turn array to white (land) array
-	for y in range(w):
-		for x in range(h):
-			rgb = (255,255,255)
-			outlist.append(rgb)
 
 def save_file():
     """Save the current file."""
