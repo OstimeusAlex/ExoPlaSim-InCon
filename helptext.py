@@ -10,40 +10,36 @@ HELP_DICT = {
 
     "helpstrtyr" :
     """Help: Start Year
-    1 by ault; What number year the project should start at (eg. '2000' will have the model start at 2000).
+    1 by default; What number year the project should start at (eg. '2000' will have the model start at 2000).
     This is arbitrary, however must be positive.""",
 
     "helpotptype" :
     """Help: Output Type
-    .nc by ault; File extension to use for the output, if using the pyburn postprocessor.
+    .nc by default; File extension to use for the output, if using the pyburn postprocessor.
     If using any of .hdf5, .he5, or .h5, then h5py must be installed.""",
 
     "helpcpucnt" :
     """Help: CPU Count
-    4 by ault; Number of CPUs for ExoPlaSim to use.""",
+    4 by default; Number of CPUs for ExoPlaSim to use.""",
 
     "helpresision" :
     """Help: Precision
-    8 by ault; Precision (in bytes) of some internal numbers used, either 4 or 8.
+    8 by default; Precision (in bytes) of some internal numbers used, either 4 or 8.
     4 will run a tad faster, but may be less stable and more prone to crashing.""",
 
     "helpresolution" :
     """Help: Resolution
-    T21 by ault; Sets the resolution used for modelling the planet’s surface,
+    T21 by default; Sets the resolution used for modelling the planet’s surface,
     thus the resolution of the geography one can import into the model and the output one will get.
 
-    "These are the resolutions ExoPlaSim can handle, and the associated codes to input here : Code|Height|Width
-    T21|  32  |  64
-    T42|  64  | 128
-    T63|  96  | 192
-    T85| 128  | 256
-    T106| 160  | 320
-    T127| 192  | 384
-    T170| 256  | 512""",
+    These are the resolutions ExoPlaSim can handle, and the associated codes to input here :
+    Code   | T21 | T42 | T63 | T85 | T106 | T127 | T170
+    Height |  32 |  64 |  96 | 128 |  160 |  192 |  256
+    Width  |  64 | 128 | 192 | 256 |  320 |  384 |  512""",
 
     "helpcrshtlrnt" :
     """Help: Crash Tolorant
-    False by ault; If set to True, then if the model crashes (and at least 10 years have been simulated),it will rewind 10 years and try again.
+    False by default; If set to True, then if the model crashes (and at least 10 years have been simulated),it will rewind 10 years and try again.
     This can help get around some crashes caused by essentially just random noise in the model, without requiring manually restarting it each time.
 
     On the other hand, if there’s some more fundamental issue with the model
@@ -52,32 +48,32 @@ HELP_DICT = {
 
     "helplayers" :
     """Help: Layers
-    10 by ault; Number of atmospheric layers modeled—in essence, the vertical resolution of the model grid.
+    10 by default; Number of atmospheric layers modeled—in essence, the vertical resolution of the model grid.
     Low-resolution models seem to work fine with 5, which saves a good deal of computing time.
     Higher-resolution models may require more layers for best accuracy, but would further extend the runtime.""",
 
     "helprecompile" :
     """Help: Recompile
-    False by ault; If set to True, forces exoplasim to compile again before running.
+    False by default; If set to True, forces exoplasim to compile again before running.
     May be useful if you’ve altered some of the source files.""",
 
     ####Stellar Parameters
 
     "helpstrtmp" :
     """Help: Star Temperature
-    5772.0 by ault; The effective temperature of the star in Kelvin, will be used to adjust atmospheric absorption and surface albedo.
+    5772.0 by default; The effective temperature of the star in Kelvin, will be used to adjust atmospheric absorption and surface albedo.
     It does not affect flux or year length, and if not set, a sunlike star will be assumed.""",
 
     "helpstlrflx" :
     """Help: Stellar Flux
-    1367.0 by ault; The flux of sunlight hitting the top of the planet’s atmosphere, in watts/meter^2.
+    1367.0 by default; The flux of sunlight hitting the top of the planet’s atmosphere, in watts/meter^2.
     Value represents Earth's Stellar Flux.""",
 
     ####Orbital Parameters
 
     "helpyrlngth" :
     """Help: Year Length
-    365.25 by ault; Length of the year, in 24-hour Earth days.
+    365.25 by default; Length of the year, in 24-hour Earth days.
     This controls the period the planet takes to orbit its star, not the length of the years used for the output files and the model run controls;
     Those are set by the runsteps parameter, though generally speaking they should probably be the same, except for very short orbital periods.
 
@@ -86,7 +82,7 @@ HELP_DICT = {
 
     "helpdaylngth" :
     """Help: Day Length
-    1.0 by ault; Rotation period of the planet, compared to Earth.
+    1.0 by default; Rotation period of the planet, compared to Earth.
     This is a sidereal day (23 hours 56 minutes for Earth).
     For planets with many orbits per year it should be an insignificant difference from a solar day.
 
@@ -96,20 +92,20 @@ HELP_DICT = {
 
     "helpeccentr" :
     """Help: Eccentricity
-    0.016715 by ault; Eccentricity of the planet’s orbit.""",
+    0.016715 by default; Eccentricity of the planet’s orbit.""",
 
     "helpoblqty" :
     """Help: Obliquity
-    23.441 by ault; Obliquity, A.K.A. axial tilt, in degrees.""",
+    23.441 by default; Obliquity, A.K.A. axial tilt, in degrees.""",
 
     "helplngpri" :
     """Help: Longitude of Periapsis
-    102.7 by ault; Longitude (angle along the orbit) of periapsis (point when the planet is closest to the star) in degrees.
+    102.7 by default; Longitude (angle along the orbit) of periapsis (point when the planet is closest to the star) in degrees.
     Measured from the autumnal equinox, which is used to orient the planet’s rotational axis relative to its orbit.""",
 
     "helpfxdobt" :
     """Help: Fixed Orbit
-    True by ault; True forces the orbit to remain unchanged throughout the simulation.
+    True by default; True forces the orbit to remain unchanged throughout the simulation.
     False allows for ExoPlaSim to calculate Milankovitch cycles to alter the planet’s orbit and orientation.
 
     The latter feature is still under development, so it’s probably best to keep this on for now.""",
@@ -124,7 +120,7 @@ HELP_DICT = {
     """Help: Substellar Longitude
     180 by Default; Longitude of the substellar point, in degrees.
     If importing geography with 0 longitude at the center, the geography will be offset 180 degrees from the model’s coordinate system.
-    The ault of 180 would places the substellar point at 0 longitude.""",
+    The default of 180 would places the substellar point at 0 longitude.""",
 
     "helpsbstlrdsync" :
     """Help: Substellar Desync
@@ -157,7 +153,7 @@ HELP_DICT = {
 
     "helpaquaplnt" :
     """Help: Aqua Planet
-    False by Default; True erases land surfaces (including the ault earth geography) and gives a uniform, all-ocean planet.
+    False by Default; True erases land surfaces (including the default earth geography) and gives a uniform, all-ocean planet.
     May run a bit faster, so it can be useful for debugging or quick tests of other factors.""",
 
     "helpdsrtplnt" :
@@ -173,7 +169,7 @@ HELP_DICT = {
 
     None will leave the model off
     \"Diagnostic\" vegetation is fixed to an initial value of vegetation cover across all land
-    \"Dynamic\" will activate a vegetation model that will grow and die back in response to the local climate, producing an estimate of the resulting forest cover in the output.
+    \"Dynamic\" will activate a vegetation model that will grow and die back in response to the climate, producing an estimate of the forest cover in the output.
     This will probably slow down the model to some extent, so one might want to leave it off until putting together a final model.""",
 
     "helpvgaclrtn" :
@@ -292,7 +288,7 @@ HELP_DICT = {
     "helplndsra" :
     """Help: Land SRA
     N/A by Default; Path to a .sra file containing a land/sea mask for the planet’s geography.
-    It’ll ault to Earth’s geography (at least for T21 and T42 runs) if not set.""",
+    It’ll default to Earth’s geography (at least for T21 and T42 runs) if not set.""",
 
     "helptposra" :
     """Help: Topographic SRA
@@ -327,18 +323,11 @@ HELP_DICT = {
     "helpgsprsurs" :
     """Help: Gas Pressures (AKA Partial Pressures)
     False by Default; Enabling allows one to set partial pressures(bar) of various gasses:
-    H2 - Hydrogen
-    He - Helium
-    N2 - Nitrogen
-    O2 - Oxygen
-    Ar - Argon
-    Ne - Neon
-    Kr - Krypton
-    H20 - Water Vapour
-    CO2 - Carbon Dioxide
+    H2 - Hydrogen    |    He - Helium           |    N2 - Nitrogen
+    O2 - Oxygen      |    Ar - Argon            |    Ne - Neon
+    Kr - Krypton     |    H20 - Water Vapour    |    CO2 - Carbon Dioxide
 
-    NOTE: Other than ozone, CO2 is the only greenhouse gas one can directly set.
-    H20 only affects surface pressure and the gas constant;
+    NOTE: Other than ozone, CO2 is the only greenhouse gas one can directly set. H20 only affects surface pressure and the gas constant;
     It is not referenced in determining humidity, any aspect of the water cycle, or greenhouse heating by water vapour.""",
 
     ####Glacial Parameters
@@ -360,26 +349,23 @@ HELP_DICT = {
 
     "helptimestep" :
     """Help: Timestep
-    45.0 by ault; How much time passes in each step of the simulation, in minutes.
-    Longer timesteps will make the simulation run faster, but it may be less stable and accurate.
+    45.0 by default; How much time passes in each step of the simulation, in minutes. Longer timesteps makes the simulation run faster at the cost of stability.
 
     For tidal-locked planets 30.0 is recommended, in general if a crash occurs, reduce the timestep
     (especially if the Konsole output refers to “non-finite temperatures”).
 
     Generally seems to work better if there are a whole number of timesteps in a 24-hour day.
-    Timesteps of 5, 6, 10, 12, 15, 18, 20, 24, 30, 36, 40, 45, and 60 minutes are all decent options.
-    (24 * 60) / timestep = an integer""",
+    Timesteps of 5, 6, 10, 12, 15, 18, 20, 24, 30, 36, 40, 45, and 60 minutes are all decent options. (24 * 60) / timestep = an integer""",
 
     "helprunsteps" :
     """Help: Runsteps
-    11520 by ault; How often averaged data is written to an output file(a simulation year), in number of timesteps.
-    By ault this is set for a 360-day year, ExoPlaSim will automatically adjust to different timesteps if not configured here.
+    11520 by default; How often averaged data is written to an output file(a simulation year), in number of timesteps.
+    By default this is set for a 360-day year, ExoPlaSim will automatically adjust to different timesteps if not configured here.
 
     This does not alter the simulated planet’s orbital period, or really any aspect of its climate;
-    it merely alters the period of time referred to in later steps that run the model for a period of years, and the length of time represented in the output files.
+    it merely alters the length of time referred to in later steps that run the model for a period of years, and the time represented in the output files.
 
-    Should contain a whole number of NSTPW intervals.
-    runsteps / NSTPW = an integer""",
+    Should contain a whole number of NSTPW intervals. runsteps / NSTPW = an integer""",
 
     "helpsnapshots" :
     """Help: Snapshots
