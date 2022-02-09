@@ -33,6 +33,7 @@ pressuretog = 0
 gascontog = 0
 ptog = 0
 gtog = 0
+rstfletog = 0
 stmtog = 0
 baltog = 0
 
@@ -235,10 +236,10 @@ def hghtimgget():
     hghtmpimg_var.set(filename) # add this
 def landsraget():
     filename = askopenfilename(filetypes=(("sra files","*.sra"),("All files","*.*")))
-    hghtmpimg_var.set(filename) # add this
+    lndsra_var.set(filename) # add this
 def toposraget():
     filename = askopenfilename(filetypes=(("sra files","*.sra"),("All files","*.*")))
-    hghtmpimg_var.set(filename) # add this
+    tposra_var.set(filename) # add this
 def pressuretoggle():
     global pressuretog
     if pressuretog == 0:
@@ -289,6 +290,19 @@ def gtoggle():
         gtog = 0
         inith_n.config(state='disabled')
         mndph_n.config(state='disabled')
+def rstrtfleget():
+    filename = askopenfilename(filetypes=(("restart files","*.00000"),("All files","*.*")))
+    restrtfle_var.set(filename) # add this
+def rstrtfletoggle():
+    global rstfletog
+    if rstfletog == 0:
+        rstfletog = 1
+        restrtfle_n.config(state='enabled')
+        restrtfle_b.config(state='enabled')
+    elif rstfletog == 1:
+        rstfletog = 0
+        restrtfle_n.config(state='disabled')
+        restrtfle_b.config(state='disabled')
 def stmtoggle():
     global stmtog
     if stmtog == 0:
@@ -460,6 +474,8 @@ def save_file():
     runsteptext = str(runstp_var.get())
     snapshotext = str(snpsht_var.get())
     nsptwtext = str(nsptw_var.get())
+    restartfiletext = str(restrtfle_var.get())
+    rstrtfletext = str(restrtfletog_var.get())
     physics1text = str(phyfilt1_var.get())
     physics2text = str(phyfilt2_var.get())
     stormtext = str(stormcltog_var.get())
@@ -480,7 +496,6 @@ def save_file():
     if aquaptext == "False":
         aquaplanetext = ''
         if imgsratext == "False":
-
             convert_sra(
                 filepath=filepath,
                 infile=hghtimgpath,
@@ -492,20 +507,20 @@ def save_file():
                 trench_value=float(lwelvtext),
                 resotext=resotext,
                 sra_name=sranmetext
-            )
-
-            
+            ) 
         else:
             lndsrafle = ntpath.basename(landsratext)
             tposrafle = ntpath.basename(toposratext)
             sra_path = path.dirname(filepath)+'/SRA'
+            lnd_path = sra_path+"/"+lndsrafle
+            tpo_path = sra_path+"/"+tposrafle
             try:
                 os.makedirs(sra_path)
             except FileExistsError:
                 # directory already exists
                 pass
-            shutil.copyfile(landsratext, sra_path)
-            shutil.copyfile(toposratext, sra_path)
+            shutil.copyfile(landsratext, lnd_path)
+            shutil.copyfile(toposratext, tpo_path)
             landmaptext = 'landmap="SRA/'+lndsrafle+'",'
             topomaptext = 'topomap="SRA/'+tposrafle+'"<'
     else:
@@ -606,6 +621,19 @@ def save_file():
         snapshotstext = ',snapshots='+snapshotext
     else:
         snapshotstext = ''
+    if rstrtfletext == "True":
+        rstrtfle = ntpath.basename(restartfiletext)
+        ref_path = path.dirname(filepath)+'/Restart'
+        rfle_path = ref_path+"/"+rstrtfle
+        try:
+            os.makedirs(ref_path)
+        except FileExistsError:
+            # directory already exists
+            pass
+        shutil.copyfile(restartfiletext, rfle_path)
+        filerstrt = ',restartfile="Restart/'+rstrtfle+'"'
+    else:
+        filerstrt = ""
     if physics1text == "None":
         physicstext = ''
     elif physics1text == "Cesaro":
@@ -660,7 +688,7 @@ def save_file():
     format_atmosphere = "				  "+atmospheretext+'\n'
     format_ppressure = ppressuretext
     format_glacier = glacialtext
-    format_timekeep = "				  timestep="+timesteptext+',runsteps='+runsteptext+snapshotstext+",otherargs={'NSTPW@plasim_namelist':'"+nsptwtext+"'}"+physicstext
+    format_timekeep = "				  timestep="+timesteptext+',runsteps='+runsteptext+snapshotstext+",otherargs={'NSTPW@plasim_namelist':'"+nsptwtext+"'}"+physicstext+filerstrt
     format_storms = stormstext
     format_export = nametext+".exportcfg()\n"
     format_run = runtext+',crashifbroken='+crashbrkntext+',clean='+cleantext+')\n'
@@ -987,78 +1015,91 @@ desertp_n.grid(row=5, column=2, sticky="w")
 #---------------------------------------------------------------------------
 #---------------------------------------------------------------------------
 
-#Vegetation Parameter Frame
+#Geographic Parameter Frame
+geopar_frame = createParameterFrame(masterIn=col_two_frame, rowIn=5, colIn=1, gridIndex=[1,2,3,4,5,6,7,8,9])
 
-vegpar_frame = createParameterFrame(masterIn=col_two_frame, rowIn=5, colIn=1, gridIndex=[1,2,3,4,5,6,7,8])
+geoparam = Label(master=geopar_frame,text="Geographic Parameters")
+geoparam.grid(row=0,column=1,columnspan=3,sticky="n")
 
-vegparam = Label(master=vegpar_frame,text="Vegetation Parameters")
-vegparam.grid(row=0,column=1,columnspan=2,sticky="n")
+#Image/SRA Toggle
+imgsratog = createOptionLabel(masterIn=geopar_frame, textIn="Image/SRA Toggle: ", helpText="helpimgsratog", rowIn=1, colIn=1)
+imgsratogtog_var = StringVar()
+imgsratogtog_var.set('False')
+imgsratogtog_n = Checkbutton(master=geopar_frame,variable=imgsratogtog_var,command=imgsratoggle, onvalue='True', offvalue='False')
+imgsratogtog_n.grid(row=1, column=2, sticky="w")
 
-#Vegetation
-vegetat = createOptionLabel(masterIn=vegpar_frame, textIn="Vegetation: ", helpText="helpvgtn", rowIn=1, colIn=1)
-vegetat_options = ["None", "None", "Proscribed", "Dynamic"]
+#Height Map Image
+hghtmpimg = createOptionLabel(masterIn=geopar_frame, textIn="Height Map Image: ", helpText="helphghtmpimg", rowIn=2, colIn=1)
+hghtmpimg_var = StringVar()
+hghtmpimg_var.set('')
+hghtmpimg_n = Entry(master=geopar_frame,textvariable=hghtmpimg_var, width=7)
+hghtmpimg_n.config(state='enabled')
+hghtmpimg_n.grid(row=2, column=2, sticky="w")
+hghtmpimg_b = Button(master=geopar_frame,text="Open",command=hghtimgget, width=7)
+hghtmpimg_b.config(state='enabled')
+hghtmpimg_b.grid(row=2, column=3, sticky="w")
 
-vegetat_var = StringVar()
-vegetat_var.set(vegetat_options[0])
-vegetat_n = OptionMenu(vegpar_frame, vegetat_var, *vegetat_options, command=vegtoggle)
-vegetat_n.config(width=7)
-vegetat_n.grid(row=1, column=2, sticky="w")
+#Water Threshold
+waterhres = createOptionLabel(masterIn=geopar_frame, textIn="Water Threshold: ", helpText="helpwtrthrshld", rowIn=3, colIn=1)
+waterhres_var = IntVar()
+waterhres_var.set(0)
+waterhres_n = Entry(master=geopar_frame,textvariable=waterhres_var, width=7)
+waterhres_n.config(state='enabled')
+waterhres_n.grid(row=3, column=2, sticky="w")
 
-#Veg. Acceleration
-vegacce = createOptionLabel(masterIn=vegpar_frame, textIn="Veg. Acceleration: ", helpText="helpvgaclrtn", rowIn=2, colIn=1)
-vegacce_var = IntVar()
-vegacce_var.set(1)
-vegacce_n = Entry(master=vegpar_frame,textvariable=vegacce_var, width=7)
-vegacce_n.config(state='disabled')
-vegacce_n.grid(row=2, column=2, sticky="w")
+#Highest Elevation
+highelev = createOptionLabel(masterIn=geopar_frame, textIn="Highest Elevation (m): ", helpText="helphghstelvtn", rowIn=4, colIn=1)
+highelev_var = DoubleVar()
+highelev_var.set(8849.0)
+highelev_n = Entry(master=geopar_frame,textvariable=highelev_var, width=7)
+highelev_n.config(state='enabled')
+highelev_n.grid(row=4, column=2, sticky="w")
 
-#Biomass Growth
-nfrtgrw = createOptionLabel(masterIn=vegpar_frame, textIn="Biomass Growth: ", helpText="helpbiomsgrwth", rowIn=3, colIn=1)
-nfrtgrw_var = DoubleVar()
-nfrtgrw_var.set(1.0)
-nfrtgrw_n = Entry(master=vegpar_frame,textvariable=nfrtgrw_var, width=7)
-nfrtgrw_n.config(state='disabled')
-nfrtgrw_n.grid(row=3, column=2, sticky="w")
+#Lowest Elevation
+lowelev = createOptionLabel(masterIn=geopar_frame, textIn="Lowest Elevation (m): ", helpText="helplwstelvtn", rowIn=5, colIn=1)
+lowelev_var = DoubleVar()
+lowelev_var.set(-11034.0)
+lowelev_n = Entry(master=geopar_frame,textvariable=lowelev_var, width=7)
+lowelev_n.config(state='disabled')
+lowelev_n.grid(row=5, column=2, sticky="w")
 
-#Initial Growth
-initgrw = createOptionLabel(masterIn=vegpar_frame, textIn="Initial Growth: ", helpText="helpintlgrth", rowIn=4, colIn=1)
-initgrw_var = DoubleVar()
-initgrw_var.set(0.5)
-initgrw_n = Entry(master=vegpar_frame,textvariable=initgrw_var, width=7)
-initgrw_n.config(state='disabled')
-initgrw_n.grid(row=4, column=2, sticky="w")
+#Image Debug
+imgdebug = createOptionLabel(masterIn=geopar_frame, textIn="Image Debug: ", helpText="helpimgdbg", rowIn=6, colIn=1)
+imgdebugtog_var = StringVar()
+imgdebugtog_var.set('False')
+imgdebugtog_n = Checkbutton(master=geopar_frame,variable=imgdebugtog_var, onvalue='True', offvalue='False')
+imgdebugtog_n.config(state='enabled')
+imgdebugtog_n.grid(row=6, column=2, sticky="w")
 
-#Initial Stomatal Conductance
-initstcd = createOptionLabel(masterIn=vegpar_frame, textIn="Stomatal Conductance: ", helpText="helpstmtlcndtnce", rowIn=5, colIn=1)
-initstcd_var = DoubleVar()
-initstcd_var.set(1.0)
-initstcd_n = Entry(master=vegpar_frame,textvariable=initstcd_var, width=7)
-initstcd_n.config(state='disabled')
-initstcd_n.grid(row=5, column=2, sticky="w")
+#SRA Name
+sranme = createOptionLabel(masterIn=geopar_frame, textIn="SRA Name: ", helpText="helpsranme", rowIn=7, colIn=1)
+sranme_var = StringVar()
+sranme_var.set("earth")
+sranme_n = Entry(master=geopar_frame,textvariable=sranme_var, width=7)
+sranme_n.config(state='enabled')
+sranme_n.grid(row=7, column=2, sticky="w")
 
-#Initial Vegetative Surface Roughness
-initrgh = createOptionLabel(masterIn=vegpar_frame, textIn="Vegetation Roughness: ", helpText="helpvgtnrghns", rowIn=6, colIn=1)
-initrgh_var = DoubleVar()
-initrgh_var.set(2.0)
-initrgh_n = Entry(master=vegpar_frame,textvariable=initrgh_var, width=7)
-initrgh_n.config(state='disabled')
-initrgh_n.grid(row=6, column=2, sticky="w")
+#Land SRA
+lndsra = createOptionLabel(masterIn=geopar_frame, textIn="Land SRA: ", helpText="helplndsra", rowIn=8, colIn=1)
+lndsra_var = StringVar()
+lndsra_var.set('')
+lndsra_n = Entry(master=geopar_frame,textvariable=lndsra_var, width=7)
+lndsra_n.config(state='disabled')
+lndsra_n.grid(row=8, column=2, sticky="w")
+lndsra_b = Button(master=geopar_frame,text="Open",command=landsraget, width=7)
+lndsra_b.config(state='disabled')
+lndsra_b.grid(row=8, column=3, sticky="w")
 
-#Initial Soil Carbon Content
-initslc = createOptionLabel(masterIn=vegpar_frame, textIn="Soil Carbon Content: ", helpText="helpslcbncntnt", rowIn=7, colIn=1)
-initslc_var = DoubleVar()
-initslc_var.set(0.0)
-initslc_n = Entry(master=vegpar_frame,textvariable=initslc_var, width=7)
-initslc_n.config(state='disabled')
-initslc_n.grid(row=7, column=2, sticky="w")
-
-#Initial Vegetative Carbon Content
-initplc = createOptionLabel(masterIn=vegpar_frame, textIn="Plant Carbon Content: ", helpText="helplntcbncntnt", rowIn=8, colIn=1)
-initplc_var = DoubleVar()
-initplc_var.set(0.0)
-initplc_n = Entry(master=vegpar_frame,textvariable=initplc_var, width=7)
-initplc_n.config(state='disabled')
-initplc_n.grid(row=8, column=2, sticky="w")
+#Topo SRA
+tposra = createOptionLabel(masterIn=geopar_frame, textIn="Topographic SRA: ", helpText="helptposra", rowIn=9, colIn=1)
+tposra_var = StringVar()
+tposra_var.set('')
+tposra_n = Entry(master=geopar_frame,textvariable=tposra_var, width=7)
+tposra_n.config(state='disabled')
+tposra_n.grid(row=9, column=2, sticky="w")
+tposra_b = Button(master=geopar_frame,text="Open",command=toposraget, width=7)
+tposra_b.config(state='disabled')
+tposra_b.grid(row=9, column=3, sticky="w")
 
 #------------------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------------------
@@ -1220,91 +1261,77 @@ oceanzen_n.grid(row=12,column=2, sticky="w")
 #---------------------------------------------------------------------------
 #---------------------------------------------------------------------------
 
-#Geographic Parameter Frame
-geopar_frame = createParameterFrame(masterIn=col_three_frame, rowIn=3, colIn=1, gridIndex=[1,2,3,4,5,6,7,8,9])
+#Vegetation Parameter Frame
+vegpar_frame = createParameterFrame(masterIn=col_three_frame, rowIn=3, colIn=1, gridIndex=[1,2,3,4,5,6,7,8])
 
-geoparam = Label(master=geopar_frame,text="Geographic Parameters")
-geoparam.grid(row=0,column=1,columnspan=3,sticky="n")
+vegparam = Label(master=vegpar_frame,text="Vegetation Parameters")
+vegparam.grid(row=0,column=1,columnspan=2,sticky="n")
 
-#Image/SRA Toggle
-imgsratog = createOptionLabel(masterIn=geopar_frame, textIn="Image/SRA Toggle: ", helpText="helpimgsratog", rowIn=1, colIn=1)
-imgsratogtog_var = StringVar()
-imgsratogtog_var.set('False')
-imgsratogtog_n = Checkbutton(master=geopar_frame,variable=imgsratogtog_var,command=imgsratoggle, onvalue='True', offvalue='False')
-imgsratogtog_n.grid(row=1, column=2, sticky="w")
+#Vegetation
+vegetat = createOptionLabel(masterIn=vegpar_frame, textIn="Vegetation: ", helpText="helpvgtn", rowIn=1, colIn=1)
+vegetat_options = ["None", "None", "Proscribed", "Dynamic"]
 
-#Height Map Image
-hghtmpimg = createOptionLabel(masterIn=geopar_frame, textIn="Height Map Image: ", helpText="helphghtmpimg", rowIn=2, colIn=1)
-hghtmpimg_var = StringVar()
-hghtmpimg_var.set('')
-hghtmpimg_n = Entry(master=geopar_frame,textvariable=hghtmpimg_var, width=7)
-hghtmpimg_n.config(state='enabled')
-hghtmpimg_n.grid(row=2, column=2, sticky="w")
-hghtmpimg_b = Button(master=geopar_frame,text="Open",command=hghtimgget, width=7)
-hghtmpimg_b.config(state='enabled')
-hghtmpimg_b.grid(row=2, column=3, sticky="w")
+vegetat_var = StringVar()
+vegetat_var.set(vegetat_options[0])
+vegetat_n = OptionMenu(vegpar_frame, vegetat_var, *vegetat_options, command=vegtoggle)
+vegetat_n.config(width=7)
+vegetat_n.grid(row=1, column=2, sticky="w")
 
-#Water Threshold
-waterhres = createOptionLabel(masterIn=geopar_frame, textIn="Water Threshold: ", helpText="helpwtrthrshld", rowIn=3, colIn=1)
-waterhres_var = IntVar()
-waterhres_var.set(0)
-waterhres_n = Entry(master=geopar_frame,textvariable=waterhres_var, width=7)
-waterhres_n.config(state='enabled')
-waterhres_n.grid(row=3, column=2, sticky="w")
+#Veg. Acceleration
+vegacce = createOptionLabel(masterIn=vegpar_frame, textIn="Veg. Acceleration: ", helpText="helpvgaclrtn", rowIn=2, colIn=1)
+vegacce_var = IntVar()
+vegacce_var.set(1)
+vegacce_n = Entry(master=vegpar_frame,textvariable=vegacce_var, width=7)
+vegacce_n.config(state='disabled')
+vegacce_n.grid(row=2, column=2, sticky="w")
 
-#Highest Elevation
-highelev = createOptionLabel(masterIn=geopar_frame, textIn="Highest Elevation (m): ", helpText="helphghstelvtn", rowIn=4, colIn=1)
-highelev_var = DoubleVar()
-highelev_var.set(8849.0)
-highelev_n = Entry(master=geopar_frame,textvariable=highelev_var, width=7)
-highelev_n.config(state='enabled')
-highelev_n.grid(row=4, column=2, sticky="w")
+#Biomass Growth
+nfrtgrw = createOptionLabel(masterIn=vegpar_frame, textIn="Biomass Growth: ", helpText="helpbiomsgrwth", rowIn=3, colIn=1)
+nfrtgrw_var = DoubleVar()
+nfrtgrw_var.set(1.0)
+nfrtgrw_n = Entry(master=vegpar_frame,textvariable=nfrtgrw_var, width=7)
+nfrtgrw_n.config(state='disabled')
+nfrtgrw_n.grid(row=3, column=2, sticky="w")
 
-#Lowest Elevation
-lowelev = createOptionLabel(masterIn=geopar_frame, textIn="Lowest Elevation (m): ", helpText="helplwstelvtn", rowIn=5, colIn=1)
-lowelev_var = DoubleVar()
-lowelev_var.set(-11034.0)
-lowelev_n = Entry(master=geopar_frame,textvariable=lowelev_var, width=7)
-lowelev_n.config(state='disabled')
-lowelev_n.grid(row=5, column=2, sticky="w")
+#Initial Growth
+initgrw = createOptionLabel(masterIn=vegpar_frame, textIn="Initial Growth: ", helpText="helpintlgrth", rowIn=4, colIn=1)
+initgrw_var = DoubleVar()
+initgrw_var.set(0.5)
+initgrw_n = Entry(master=vegpar_frame,textvariable=initgrw_var, width=7)
+initgrw_n.config(state='disabled')
+initgrw_n.grid(row=4, column=2, sticky="w")
 
-#Image Debug
-imgdebug = createOptionLabel(masterIn=geopar_frame, textIn="Image Debug: ", helpText="helpimgdbg", rowIn=6, colIn=1)
-imgdebugtog_var = StringVar()
-imgdebugtog_var.set('False')
-imgdebugtog_n = Checkbutton(master=geopar_frame,variable=imgdebugtog_var, onvalue='True', offvalue='False')
-imgdebugtog_n.config(state='enabled')
-imgdebugtog_n.grid(row=6, column=2, sticky="w")
+#Initial Stomatal Conductance
+initstcd = createOptionLabel(masterIn=vegpar_frame, textIn="Stomatal Conductance: ", helpText="helpstmtlcndtnce", rowIn=5, colIn=1)
+initstcd_var = DoubleVar()
+initstcd_var.set(1.0)
+initstcd_n = Entry(master=vegpar_frame,textvariable=initstcd_var, width=7)
+initstcd_n.config(state='disabled')
+initstcd_n.grid(row=5, column=2, sticky="w")
 
-#SRA Name
-sranme = createOptionLabel(masterIn=geopar_frame, textIn="SRA Name: ", helpText="helpsranme", rowIn=7, colIn=1)
-sranme_var = StringVar()
-sranme_var.set("earth")
-sranme_n = Entry(master=geopar_frame,textvariable=sranme_var, width=7)
-sranme_n.config(state='enabled')
-sranme_n.grid(row=7, column=2, sticky="w")
+#Initial Vegetative Surface Roughness
+initrgh = createOptionLabel(masterIn=vegpar_frame, textIn="Vegetation Roughness: ", helpText="helpvgtnrghns", rowIn=6, colIn=1)
+initrgh_var = DoubleVar()
+initrgh_var.set(2.0)
+initrgh_n = Entry(master=vegpar_frame,textvariable=initrgh_var, width=7)
+initrgh_n.config(state='disabled')
+initrgh_n.grid(row=6, column=2, sticky="w")
 
-#Land SRA
-lndsra = createOptionLabel(masterIn=geopar_frame, textIn="Land SRA: ", helpText="helplndsra", rowIn=8, colIn=1)
-lndsra_var = StringVar()
-lndsra_var.set('')
-lndsra_n = Entry(master=geopar_frame,textvariable=lndsra_var, width=7)
-lndsra_n.config(state='disabled')
-lndsra_n.grid(row=8, column=2, sticky="w")
-lndsra_b = Button(master=geopar_frame,text="Open",command=landsraget, width=7)
-lndsra_b.config(state='disabled')
-lndsra_b.grid(row=8, column=3, sticky="w")
+#Initial Soil Carbon Content
+initslc = createOptionLabel(masterIn=vegpar_frame, textIn="Soil Carbon Content: ", helpText="helpslcbncntnt", rowIn=7, colIn=1)
+initslc_var = DoubleVar()
+initslc_var.set(0.0)
+initslc_n = Entry(master=vegpar_frame,textvariable=initslc_var, width=7)
+initslc_n.config(state='disabled')
+initslc_n.grid(row=7, column=2, sticky="w")
 
-#Topo SRA
-tposra = createOptionLabel(masterIn=geopar_frame, textIn="Topographic SRA: ", helpText="helptposra", rowIn=9, colIn=1)
-tposra_var = StringVar()
-tposra_var.set('')
-tposra_n = Entry(master=geopar_frame,textvariable=tposra_var, width=7)
-tposra_n.config(state='disabled')
-tposra_n.grid(row=9, column=2, sticky="w")
-tposra_b = Button(master=geopar_frame,text="Open",command=toposraget, width=7)
-tposra_b.config(state='disabled')
-tposra_b.grid(row=9, column=3, sticky="w")
+#Initial Vegetative Carbon Content
+initplc = createOptionLabel(masterIn=vegpar_frame, textIn="Plant Carbon Content: ", helpText="helplntcbncntnt", rowIn=8, colIn=1)
+initplc_var = DoubleVar()
+initplc_var.set(0.0)
+initplc_n = Entry(master=vegpar_frame,textvariable=initplc_var, width=7)
+initplc_n.config(state='disabled')
+initplc_n.grid(row=8, column=2, sticky="w")
 
 #------------------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------------------
@@ -1501,7 +1528,7 @@ col_five_frame.rowconfigure([1,2], minsize=10, weight=1)
 #Model Dynamic Parameters
 mdldynpar_frame = Frame(master=col_five_frame,relief=GROOVE,borderwidth=3)
 mdldynpar_frame.grid(row=1,column=1,sticky="new")
-mdldynpar_frame.rowconfigure([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18], minsize=20)
+mdldynpar_frame.rowconfigure([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19], minsize=20)
 
 mdldynparam = Label(master=mdldynpar_frame,text="Model Dynamic Parameters")
 mdldynparam.grid(row=0,column=1,columnspan=2,sticky="n")
@@ -1534,114 +1561,129 @@ nsptw_var.set(160)
 nsptw_n = Entry(master=mdldynpar_frame,textvariable=nsptw_var, width=7)
 nsptw_n.grid(row=4, column=2, sticky="w")
 
+#Restart File
+restrtfle = createOptionLabel(masterIn=mdldynpar_frame, textIn="Restart File: ", helpText="helprestrtfle", rowIn=5, colIn=1)
+restrtfle_var = StringVar()
+restrtfle_var.set('')
+restrtfle_n = Entry(master=mdldynpar_frame,textvariable=restrtfle_var, width=7)
+restrtfle_n.config(state='disabled')
+restrtfle_n.grid(row=5, column=2, sticky="w")
+restrtfle_b = Button(master=mdldynpar_frame,text="Open",command=rstrtfleget, width=7)
+restrtfle_b.config(state='disabled')
+restrtfle_b.grid(row=5, column=3, sticky="w")
+restrtfletog_var = StringVar()
+restrtfletog_var.set('False')
+restrtfle_c = Checkbutton(master=mdldynpar_frame,variable=restrtfletog_var,command=rstrtfletoggle, onvalue='True', offvalue='False')
+restrtfle_c.grid(row=5, column=4, sticky="w")
+
 #Physics Filter 1
-phyfilt1 = createOptionLabel(masterIn=mdldynpar_frame, textIn="Physics Filter: ", helpText="helphysfltr", rowIn=5, colIn=1)
+phyfilt1 = createOptionLabel(masterIn=mdldynpar_frame, textIn="Physics Filter: ", helpText="helphysfltr", rowIn=6, colIn=1)
 phyfilt1_options = ["None", "None", "Cesaro", "Exp", "Lh"]
 
 phyfilt1_var = StringVar()
 phyfilt1_var.set(oceanzen_options[0])
 phyfilt1_n = OptionMenu(mdldynpar_frame, phyfilt1_var, *phyfilt1_options)
-phyfilt1_n.config(width=7)
-phyfilt1_n.grid(row=5,column=2, sticky="w")
+phyfilt1_n.config(width=5)
+phyfilt1_n.grid(row=6,column=2, sticky="w")
 
 #Physics Filter 2
-phyfilt2 = createOptionLabel(masterIn=mdldynpar_frame, textIn="Filter Application: ", helpText="helpfltrapp", rowIn=6, colIn=1)
-phyfilt2_options = ["None", "None", "GP", "SP", "GP + SP"]
+phyfilt2 = createOptionLabel(masterIn=mdldynpar_frame, textIn="Filter Application: ", helpText="helpfltrapp", rowIn=7, colIn=1)
+phyfilt2_options = ["None", "None", "GP", "SP", "GP+SP"]
 
 phyfilt2_var = StringVar()
 phyfilt2_var.set(oceanzen_options[0])
 phyfilt2_n = OptionMenu(mdldynpar_frame, phyfilt2_var, *phyfilt2_options)
-phyfilt2_n.config(width=7)
-phyfilt2_n.grid(row=6,column=2, sticky="w")
+phyfilt2_n.config(width=5)
+phyfilt2_n.grid(row=7,column=2, sticky="w")
 
 #Storm Climatology
-stormcl = createOptionLabel(masterIn=mdldynpar_frame, textIn="Storm Climatology: ", helpText="helpstmclmtlgy", rowIn=7, colIn=1)
+stormcl = createOptionLabel(masterIn=mdldynpar_frame, textIn="Storm Climatology: ", helpText="helpstmclmtlgy", rowIn=8, colIn=1)
 stormcltog_var = StringVar()
 stormcltog_var.set('False')
 stormcltog_n = Checkbutton(master=mdldynpar_frame,variable=stormcltog_var,command=stmtoggle, onvalue='True', offvalue='False')
-stormcltog_n.grid(row=7, column=2, sticky="w")
+stormcltog_n.grid(row=8, column=2, sticky="w")
 
 #High Cadence
-highcad = createOptionLabel(masterIn=mdldynpar_frame, textIn="High Cadence: ", helpText="helphghcdnce", rowIn=8, colIn=1)
+highcad = createOptionLabel(masterIn=mdldynpar_frame, textIn="High Cadence: ", helpText="helphghcdnce", rowIn=9, colIn=1)
 highcadtog_var = StringVar()
 highcadtog_var.set('False')
 highcadtog_n = Checkbutton(master=mdldynpar_frame,variable=highcadtog_var, onvalue='True', offvalue='False')
 highcadtog_n.config(state='disabled')
-highcadtog_n.grid(row=8, column=2, sticky="w")
+highcadtog_n.grid(row=9, column=2, sticky="w")
 
 #Run To Balance
-rntbal = createOptionLabel(masterIn=mdldynpar_frame, textIn="Run To Balance: ", helpText="helprntbal", rowIn=9, colIn=1)
+rntbal = createOptionLabel(masterIn=mdldynpar_frame, textIn="Run To Balance: ", helpText="helprntbal", rowIn=10, colIn=1)
 rntbaltog_var = StringVar()
 rntbaltog_var.set('False')
 rntbaltog_n = Checkbutton(master=mdldynpar_frame,variable=rntbaltog_var,command=baltoggle, onvalue='True', offvalue='False')
-rntbaltog_n.grid(row=9, column=2, sticky="w")
+rntbaltog_n.grid(row=10, column=2, sticky="w")
 
 #Run Time
-runtme = createOptionLabel(masterIn=mdldynpar_frame, textIn="Run Time (years): ", helpText="helprntme", rowIn=10, colIn=1)
+runtme = createOptionLabel(masterIn=mdldynpar_frame, textIn="Run Time (years): ", helpText="helprntme", rowIn=11, colIn=1)
 runtme_var = IntVar()
 runtme_var.set(100)
 runtme_n = Entry(master=mdldynpar_frame,textvariable=runtme_var, width=7)
-runtme_n.grid(row=10, column=2, sticky="w")
+runtme_n.grid(row=11, column=2, sticky="w")
 
 #Threshold
-trshld = createOptionLabel(masterIn=mdldynpar_frame, textIn="Threshold: ", helpText="helpthrshld", rowIn=11, colIn=1)
+trshld = createOptionLabel(masterIn=mdldynpar_frame, textIn="Threshold: ", helpText="helpthrshld", rowIn=12, colIn=1)
 trshld_var = DoubleVar()
 trshld_var.set(0.0005)
 trshld_n = Entry(master=mdldynpar_frame,textvariable=trshld_var, width=7)
 trshld_n.config(state='disabled')
-trshld_n.grid(row=11, column=2, sticky="w")
+trshld_n.grid(row=12, column=2, sticky="w")
 
 #Baseline
-bselne = createOptionLabel(masterIn=mdldynpar_frame, textIn="Baseline (years): ", helpText="helpbslne", rowIn=12, colIn=1)
+bselne = createOptionLabel(masterIn=mdldynpar_frame, textIn="Baseline (years): ", helpText="helpbslne", rowIn=13, colIn=1)
 bselne_var = IntVar()
 bselne_var.set(10)
 bselne_n = Entry(master=mdldynpar_frame,textvariable=bselne_var, width=7)
 bselne_n.config(state='disabled')
-bselne_n.grid(row=12, column=2, sticky="w")
+bselne_n.grid(row=13, column=2, sticky="w")
 
 #Max Years
-maxyr = createOptionLabel(masterIn=mdldynpar_frame, textIn="Max. Year (years): ", helpText="helpmxyr", rowIn=13, colIn=1)
+maxyr = createOptionLabel(masterIn=mdldynpar_frame, textIn="Max. Year (years): ", helpText="helpmxyr", rowIn=14, colIn=1)
 maxyr_var = IntVar()
 maxyr_var.set(100)
 maxyr_n = Entry(master=mdldynpar_frame,textvariable=maxyr_var, width=7)
 maxyr_n.config(state='disabled')
-maxyr_n.grid(row=13, column=2, sticky="w")
+maxyr_n.grid(row=14, column=2, sticky="w")
 
 #Min Years
-minyr = createOptionLabel(masterIn=mdldynpar_frame, textIn="Min. Year (years): ", helpText="helpmnyr", rowIn=14, colIn=1)
+minyr = createOptionLabel(masterIn=mdldynpar_frame, textIn="Min. Year (years): ", helpText="helpmnyr", rowIn=15, colIn=1)
 minyr_var = IntVar()
 minyr_var.set(10)
 minyr_n = Entry(master=mdldynpar_frame,textvariable=minyr_var, width=7)
 minyr_n.config(state='disabled')
-minyr_n.grid(row=14, column=2, sticky="w")
+minyr_n.grid(row=15, column=2, sticky="w")
 
 #Crash If Broken
-cshibrk = createOptionLabel(masterIn=mdldynpar_frame, textIn="Crash if Broken: ", helpText="helpcrshibrkn", rowIn=15, colIn=1)
+cshibrk = createOptionLabel(masterIn=mdldynpar_frame, textIn="Crash if Broken: ", helpText="helpcrshibrkn", rowIn=16, colIn=1)
 cshibrktog_var = StringVar()
 cshibrktog_var.set('False')
 cshibrktog_n = Checkbutton(master=mdldynpar_frame,variable=cshibrktog_var, onvalue='True', offvalue='False')
-cshibrktog_n.grid(row=15, column=2, sticky="w")
+cshibrktog_n.grid(row=16, column=2, sticky="w")
 
 #Clean
-clean = createOptionLabel(masterIn=mdldynpar_frame, textIn="Clean: ", helpText="helpcln", rowIn=16, colIn=1)
+clean = createOptionLabel(masterIn=mdldynpar_frame, textIn="Clean: ", helpText="helpcln", rowIn=17, colIn=1)
 cleantog_var = StringVar()
 cleantog_var.set('False')
 cleantog_n = Checkbutton(master=mdldynpar_frame,variable=cleantog_var, onvalue='True', offvalue='False')
-cleantog_n.grid(row=16, column=2, sticky="w")
+cleantog_n.grid(row=17, column=2, sticky="w")
 
 #All Years
-allyrs = createOptionLabel(masterIn=mdldynpar_frame, textIn="All Years: ", helpText="helpalrstrts", rowIn=17, colIn=1)
+allyrs = createOptionLabel(masterIn=mdldynpar_frame, textIn="All Years: ", helpText="helpalrstrts", rowIn=18, colIn=1)
 allyrstog_var = StringVar()
 allyrstog_var.set('False')
 allyrstog_n = Checkbutton(master=mdldynpar_frame,variable=allyrstog_var, onvalue='True', offvalue='False')
-allyrstog_n.grid(row=17, column=2, sticky="w")
+allyrstog_n.grid(row=18, column=2, sticky="w")
 
 #Keep Restarts
-kprsts = createOptionLabel(masterIn=mdldynpar_frame, textIn="Keep Restarts: ", helpText="helpkprstrts", rowIn=18, colIn=1)
+kprsts = createOptionLabel(masterIn=mdldynpar_frame, textIn="Keep Restarts: ", helpText="helpkprstrts", rowIn=19, colIn=1)
 kprststog_var = StringVar()
 kprststog_var.set('False')
 kprststog_n = Checkbutton(master=mdldynpar_frame,variable=kprststog_var, onvalue='True', offvalue='False')
-kprststog_n.grid(row=18, column=2, sticky="w")
+kprststog_n.grid(row=19, column=2, sticky="w")
 
 #------------------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------------------
