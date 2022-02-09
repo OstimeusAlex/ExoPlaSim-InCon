@@ -2,8 +2,6 @@ import os
 import tkinter
 
 HELP_DICT = {
-    
-
     "helpjctnme" :
     """Help: Project Name
     The name of your project, this is not the same as the name for the output file/folder""",
@@ -381,6 +379,12 @@ HELP_DICT = {
     It need not necessarily be a whole number of solar days, though that may be convenient to help keep things straight.
     4 < (NSTPW * timestep) / 1440 < ~6 should be best.""",
 
+    "helprestrtfle" :
+    """Help: Restart File
+    Using a restart file, ExoPlaSim is able to use the results of one simulation and carry it on using either the same parameters or with different settings.
+    Not all features can be changed however, some aspects (like topography) will stay the same regardless of any changes set by the new file.
+    """,
+
     "helphysfltr" :
     """Help: Physics Filter
     None by Default; In some cases, it may be necessary to include physics filters.
@@ -459,7 +463,6 @@ HELP_DICT = {
     False by Default; If set to True, moves the restart files—which can be used to restart and continue running the model—as well as the outputs.""",
 }
 
-
 def helpTextTk(entry, element, event):
 
     if isinstance(element, tkinter.Text):
@@ -470,4 +473,3 @@ def helpTextTk(entry, element, event):
 def helpText(entry, event):
     os.system('cls' if os.name == 'nt' else "printf '\033c'")
     print(HELP_DICT[entry])
-
