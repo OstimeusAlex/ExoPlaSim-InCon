@@ -6,6 +6,7 @@ from matplotlib.image import imread
 from PIL import Image, ImageOps
 import shutil
 import ntpath
+import configparser
 from tkinter import *
 from tkinter import font
 from tkinter import messagebox
@@ -387,130 +388,28 @@ def save_file():
         return
 #Getting input text
     os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    nametext = str(name_var.get())
-    yeartext = str(year_var.get())
-    typetext = str(output_var.get())
-    cpustext = str(cpu_var.get())
-    prestext = str(pres_var.get())
-    resotext = str(res_var.get())
-    crastext = str(crash_var.get())
-    layertext = str(layers_var.get())
-    recomptext = str(recom_var.get())
-    startext = str(startemp_var.get())
-    fluxtext = str(flux_var.get())
-    orbptext = str(orbp_var.get())
-    eccetext = str(ecc_var.get())
-    oblitext = str(obli_var.get())
-    lonvtext = str(lon_var.get())
-    fixotext = str(fixed_var.get())
-    rotptext = str(rot_var.get())
-    tidltext = str(tidal_var.get())
-    steltext = str(stellon_var.get())
-    dsynctext = str(desync_var.get())
-    tmpcntext = str(tempcon_var.get())
-    gravtext = str(gravity_var.get())
-    radustext = str(radius_var.get())
-    orogtext = str(orogph_var.get())
-    aquaptext = str(aquap_var.get())
-    dsrtptext = str(desertp_var.get())
-    vegtext = str(vegetat_var.get())
-    vacctext = str(vegacce_var.get())
-    biogrwtext = str(nfrtgrw_var.get())
-    initgrwtext = str(initgrw_var.get())
-    stomatext = str(initstcd_var.get())
-    vroughtext = str(initrgh_var.get())
-    slcartext = str(initslc_var.get())
-    pltcartext = str(initplc_var.get())
-    wtsoiltext = str(wetso_var.get())
-    slalbtext = str(soilalbtog_var.get())
-    solalbtext = str(soilalb_var.get())
-    sldpthtext = str(soildepthtog_var.get())
-    soldpthtext = str(soildepth_var.get())
-    cpsltext = str(capsoiltog_var.get())
-    capsoltext = str(capsoil_var.get())
-    slwcptext = str(soilwcptog_var.get())
-    solwcptext = str(soilwcp_var.get())
-    slsattext = str(soilsattog_var.get())
-    solsattext = str(soilsat_var.get())
-    snwalbtext = str(snowalbtog_var.get())
-    snowalbtext = str(snowalb_var.get())
-    mxsnwtext = str(mxsnowtog_var.get())
-    maxsnwtext = str(mxsnow_var.get())
-    sicetext = str(seaice_var.get())
-    ocnalbtext = str(oceanalbtog_var.get())
-    oceanalbtext = str(oceanalb_var.get())
-    mldphtext = str(mldepthtog_var.get())
-    mixldphtext = str(mldepth_var.get())
-    ocnzntext = str(oceanzen_var.get())
-    imgsratext = str(imgsratogtog_var.get())
-    hghtimgpath = hghtmpimg_var.get()
-    wtrthreshtext = str(waterhres_var.get())
-    hghelvtext = str(highelev_var.get())
-    lwelvtext = str(lowelev_var.get())
-    imgdbgtext = str(imgdebugtog_var.get())
-    sranmetext = str(sranme_var.get())
-    landsratext = str(lndsra_var.get())
-    toposratext = str(tposra_var.get())
-    prssretogtext = str(pressuretog_var.get())
-    pressuretext = str(pressure_var.get())
-    gascontogtext = str(gascontog_var.get())
-    gascontext = str(gascon_var.get())
-    drycretext = str(drycoretog_var.get())
-    ozonetext = str(ozone_var.get())
-    prtlprssretext = str(partialptog_var.get())
-    H2text = str(pH2_var.get())
-    Hetext = str(pHe_var.get())
-    N2text = str(pN2_var.get())
-    O2text = str(pO2_var.get())
-    Artext = str(pAr_var.get())
-    Netext = str(pNe_var.get())
-    Krtext = str(pKr_var.get())
-    H2Otext = str(pH2O_var.get())
-    CO2text = str(pCO2_var.get())
-    glaciertext = str(glacialtog_var.get())
-    initheightext = str(inith_var.get())
-    mindepthtext = str(mndph_var.get())
-    timesteptext = str(tmestp_var.get())
-    runsteptext = str(runstp_var.get())
-    snapshotext = str(snpsht_var.get())
-    nsptwtext = str(nsptw_var.get())
-    restartfiletext = str(restrtfle_var.get())
-    rstrtfletext = str(restrtfletog_var.get())
-    physics1text = str(phyfilt1_var.get())
-    physics2text = str(phyfilt2_var.get())
-    stormtext = str(stormcltog_var.get())
-    highcadtext = str(highcadtog_var.get())
-    runtobaltext = str(rntbaltog_var.get())
-    runtimetext = str(runtme_var.get())
-    thresholdtext = str(trshld_var.get())
-    baselinetext = str(bselne_var.get())
-    maxyeartext = str(maxyr_var.get())
-    minyeartext = str(minyr_var.get())
-    crashbrkntext = str(cshibrktog_var.get())
-    cleantext = str(cleantog_var.get())
-    allyearstext = str(allyrstog_var.get())
-    keeprstrtstext = str(kprststog_var.get())
+    param = [str(name_var.get()),str(year_var.get()),str(output_var.get()),str(cpu_var.get()),str(pres_var.get()),str(res_var.get()),str(crash_var.get()),str(layers_var.get()),str(recom_var.get()),str(startemp_var.get()),str(flux_var.get()),str(orbp_var.get()),str(ecc_var.get()),str(obli_var.get()),str(lon_var.get()),str(fixed_var.get()),str(rot_var.get()),str(tidal_var.get()),str(stellon_var.get()),str(desync_var.get()),str(tempcon_var.get()),str(gravity_var.get()),str(radius_var.get()),str(orogph_var.get()),str(aquap_var.get()),str(desertp_var.get()),str(vegetat_var.get()),str(vegacce_var.get()),str(nfrtgrw_var.get()),str(initgrw_var.get()),str(initstcd_var.get()),str(initrgh_var.get()),str(initslc_var.get()),str(initplc_var.get()),str(wetso_var.get()),str(soilalbtog_var.get()),str(soilalb_var.get()),str(soildepthtog_var.get()),str(soildepth_var.get()),str(capsoiltog_var.get()),str(capsoil_var.get()),str(soilwcptog_var.get()),str(soilwcp_var.get()),str(soilsattog_var.get()),str(soilsat_var.get()),str(snowalbtog_var.get()),str(snowalb_var.get()),str(mxsnowtog_var.get()),str(mxsnow_var.get()),str(seaice_var.get()),str(oceanalbtog_var.get()),str(oceanalb_var.get()),str(mldepthtog_var.get()),str(mldepth_var.get()),str(oceanzen_var.get()),str(imgsratogtog_var.get()),str(hghtmpimg_var.get()),str(waterhres_var.get()),str(highelev_var.get()),str(lowelev_var.get()),str(imgdebugtog_var.get()),str(sranme_var.get()),str(lndsra_var.get()),str(tposra_var.get()),str(pressuretog_var.get()),str(pressure_var.get()),str(gascontog_var.get()),str(gascon_var.get()),str(drycoretog_var.get()),str(ozone_var.get()),str(partialptog_var.get()),str(pH2_var.get()),str(pHe_var.get()),str(pN2_var.get()),str(pO2_var.get()),str(pAr_var.get()),str(pNe_var.get()),str(pKr_var.get()),str(pH2O_var.get()),str(pCO2_var.get()),str(glacialtog_var.get()),str(inith_var.get()),str(mndph_var.get()),str(tmestp_var.get()),str(runstp_var.get()),str(snpsht_var.get()),str(nsptw_var.get()),str(restrtfle_var.get()),str(restrtfletog_var.get()),str(phyfilt1_var.get()),str(phyfilt2_var.get()),str(stormcltog_var.get()),str(highcadtog_var.get()),str(rntbaltog_var.get()),str(runtme_var.get()),str(trshld_var.get()),str(bselne_var.get()),str(maxyr_var.get()),str(minyr_var.get()),str(cshibrktog_var.get()),str(cleantog_var.get()),str(allyrstog_var.get()),str(kprststog_var.get())]
     print("Inputs gathered...")
 
     """Convert heightmap image to SRA files."""
-    if aquaptext == "False":
+    if param[24] == "False":
         aquaplanetext = ''
-        if imgsratext == "False":
+        if param[55] == "False":
             convert_sra(
                 filepath=filepath,
-                infile=hghtimgpath,
-                grav=float(gravtext),
-                debug_img= (imgdbgtext=="True"),
-                desert_planet=(dsrtptext=="True"),
-                floor_value=int(wtrthreshtext),
-                peak_value=float(hghelvtext),
-                trench_value=float(lwelvtext),
-                resotext=resotext,
-                sra_name=sranmetext
+                infile=param[56],
+                grav=float(param[21]),
+                debug_img= (param[60]=="True"),
+                desert_planet=(param[25]=="True"),
+                floor_value=int(param[57]),
+                peak_value=float(param[58]),
+                trench_value=float(param[59]),
+                resotext=param[5],
+                sra_name=param[61]
             ) 
         else:
-            lndsrafle = ntpath.basename(landsratext)
-            tposrafle = ntpath.basename(toposratext)
+            lndsrafle = ntpath.basename(param[62])
+            tposrafle = ntpath.basename(param[63])
             sra_path = path.dirname(filepath)+'/SRA'
             lnd_path = sra_path+"/"+lndsrafle
             tpo_path = sra_path+"/"+tposrafle
@@ -519,8 +418,8 @@ def save_file():
             except FileExistsError:
                 # directory already exists
                 pass
-            shutil.copyfile(landsratext, lnd_path)
-            shutil.copyfile(toposratext, tpo_path)
+            shutil.copyfile(param[62], lnd_path)
+            shutil.copyfile(param[63], tpo_path)
             landmaptext = 'landmap="SRA/'+lndsrafle+'",'
             topomaptext = 'topomap="SRA/'+tposrafle+'"<'
     else:
@@ -528,101 +427,101 @@ def save_file():
         aquaplanetext = 'aquaplanet=True,'
         landmaptext = ''
         topomaptext = ''
-    if dsrtptext == "True":
+    if param[25] == "True":
         dsrtplanetext = 'desertplanet=True,'
     else:
         dsrtplanetext = ''
 
     #Conditions
-    if crastext == "True":
-        crashtext = ',crashtolerant='+crastext
+    if param[6] == "True":
+        crashtext = ',crashtolerant='+param[6]
     else:
         crashtext = ''
-    if recomptext == "True":
-        recomtext = ',recompile='+recomptext
+    if param[8] == "True":
+        recomtext = ',recompile='+param[8]
     else:
         recomtext = ''
-    if tidltext == "True":
-        rottext = 'synchronous='+tidltext+',substellarlon='+steltext+',desync='+dsynctext+',tlcontrast='+tmpcntext
+    if param[17] == "True":
+        rottext = 'synchronous='+param[17]+',substellarlon='+param[18]+',desync='+param[19]+',tlcontrast='+param[20]
     else:
-        rottext = 'rotationperiod='+rotptext
-    if vegtext == "None":
+        rottext = 'rotationperiod='+param[16]
+    if param[26] == "None":
         vegetationtext = ''
     else:
-        if vegtext == "Proscribed":
-            vegstat = '				  vegetation=1'+',vegaccel='+vacctext+',nforestgrowth='+biogrwtext+',initgrowth='+initgrwtext
-        elif vegtext == "Dynamic":
-            vegstat = '				  vegetation=2'+',vegaccel='+vacctext+',nforestgrowth='+biogrwtext+',initgrowth='+initgrwtext
-        vegetationtext = vegstat+',initstomcond='+stomatext+',initrough='+vroughtext+',initsoilcarbon='+slcartext+',initplantcarbon='+pltcartext+',\n'
-    if slalbtext == "True":
-        soilalbtext = ",soilalbedo="+solalbtext
+        if param[26] == "Proscribed":
+            vegstat = '				  vegetation=1'+',vegaccel='+param[27]+',nforestgrowth='+param[28]+',initgrowth='+param[29]
+        elif param[26] == "Dynamic":
+            vegstat = '				  vegetation=2'+',vegaccel='+param[27]+',nforestgrowth='+param[28]+',initgrowth='+param[29]
+        vegetationtext = vegstat+',initstomcond='+param[30]+',initrough='+param[31]+',initsoilcarbon='+param[32]+',initplantcarbon='+param[33]+',\n'
+    if param[35] == "True":
+        soilalbtext = ",soilalbedo="+param[36]
     else:
         soilalbtext = ''
-    if sldpthtext == "True":
-        soildepthtext = ",soildepth="+soldpthtext
+    if param[37] == "True":
+        soildepthtext = ",soildepth="+param[38]
     else:
         soildepthtext = ''
-    if cpsltext == "True":
-        soilhcaptext = ",cpsoil="+capsoltext
+    if param[39] == "True":
+        soilhcaptext = ",cpsoil="+param[40]
     else:
         soilhcaptext = ''
-    if slwcptext == "True":
-        soilwcaptext = ",soilwatercap="+solwcptext
+    if param[41] == "True":
+        soilwcaptext = ",soilwatercap="+param[42]
     else:
         soilwcaptext = ''
-    if slsattext == "True":
-        soilsattext = ",soilsaturation="+solsattext
+    if param[43] == "True":
+        soilsattext = ",soilsaturation="+param[44]
     else:
         soilsattext = ''
-    if snwalbtext == "True":
-        snowalbtext = ",snowicealbedo="+snowalbtext
+    if param[45] == "True":
+        snowalbtext = ",snowicealbedo="+param[46]
     else:
         snowalbtext = ''
-    if mxsnwtext == "True":
-        maxsnowtext = ",maxsnow="+maxsnwtext
+    if param[47] == "True":
+        maxsnowtext = ",maxsnow="+param[48]
     else:
         maxsnowtext = ''
-    if ocnalbtext == "True":
-        oceanalbtext = ",oceanalbedo="+oceanalbtext
+    if param[50] == "True":
+        oceanalbtext = ",oceanalbedo="+param[51]
     else:
         oceanalbtext = ''
-    if mldphtext == "True":
-        mixedlyrtext = ",mldepth="+mixldphtext
+    if param[52] == "True":
+        mixedlyrtext = ",mldepth="+param[53]
     else:
         mixedlyrtext = ''
-    surfacetext1 = wtsoiltext+soilalbtext+soildepthtext+soilhcaptext+soilwcaptext+soilsattext+snowalbtext
-    surfacetext2 = maxsnowtext+',seaice='+sicetext+oceanalbtext+mixedlyrtext+',oceanzenith="'+ocnzntext+'",\n'
-    if prssretogtext == "True":
-        atmospheretext = "pressure="+pressuretext+','
+    surfacetext1 = param[34]+soilalbtext+soildepthtext+soilhcaptext+soilwcaptext+soilsattext+snowalbtext
+    surfacetext2 = maxsnowtext+',seaice='+param[49]+oceanalbtext+mixedlyrtext+',oceanzenith="'+param[54]+'",\n'
+    if param[64] == "True":
+        atmospheretext = "pressure="+param[65]+','
     else:
         atmospheretext = ''
-    if gascontogtext == "True":
-        atmospheretext = atmospheretext+'gascon='+gascontext+','
+    if param[66] == "True":
+        atmospheretext = atmospheretext+'gascon='+param[67]+','
     else:
         atmospheretext = atmospheretext+''
-    if drycretext == "True":
+    if param[68] == "True":
         atmospheretext = atmospheretext+'drycore=True,'
     else:
         atmospheretext = atmospheretext+'drycore=False,'
-    if ozonetext == "True":
+    if param[69] == "True":
         atmospheretext = atmospheretext+'ozone=True,'
     else:
         atmospheretext = atmospheretext+'ozone=False,'
-    if prtlprssretext == "True":
-        ppressuretext = "				  pH2="+H2text+',pHe='+Hetext+',pN2='+N2text+',pO2='+O2text+',pAr='+Artext+',pNe='+Netext+',pKr='+Krtext+',pH2O='+H2Otext+',pCO2='+CO2text+',\n'
+    if param[70] == "True":
+        ppressuretext = "				  pH2="+param[71]+',pHe='+param[72]+',pN2='+param[73]+',pO2='+param[74]+',pAr='+param[75]+',pNe='+param[76]+',pKr='+param[77]+',pH2O='+param[78]+',pCO2='+param[79]+',\n'
     else:
         ppressuretext = ''
-    if glaciertext == "True":
-        glacialtext = "				  glacier={‘toggle’: True, ‘mindepth’: "+mindepthtext+', ‘initialh’: '+initheightext+'},\n'
+    if param[80] == "True":
+        glacialtext = "				  glacier={‘toggle’: True, ‘mindepth’: "+param[82]+', ‘initialh’: '+param[81]+'},\n'
     else:
         glacialtext = ''
-    snapshotext = int(snapshotext)
-    if snapshotext > 0:
-        snapshotstext = ',snapshots='+snapshotext
+    param[85] = int(param[85])
+    if param[85] > 0:
+        snapshotstext = ',snapshots='+param[85]
     else:
         snapshotstext = ''
-    if rstrtfletext == "True":
-        rstrtfle = ntpath.basename(restartfiletext)
+    if param[88] == "True":
+        rstrtfle = ntpath.basename(param[87])
         ref_path = path.dirname(filepath)+'/Restart'
         rfle_path = ref_path+"/"+rstrtfle
         try:
@@ -630,70 +529,70 @@ def save_file():
         except FileExistsError:
             # directory already exists
             pass
-        shutil.copyfile(restartfiletext, rfle_path)
+        shutil.copyfile(param[87], rfle_path)
         filerstrt = ',restartfile="Restart/'+rstrtfle+'"'
     else:
         filerstrt = ""
-    if physics1text == "None":
+    if param[89] == "None":
         physicstext = ''
-    elif physics1text == "Cesaro":
-        if physics2text == "None":
+    elif param[89] == "Cesaro":
+        if param[90] == "None":
             physicstext = ''
-        elif physics2text == "GP":
+        elif param[90] == "GP":
             physicstext = ",physicsfilter='gp|cesaro'"
-        elif physics2text == "SP":
+        elif param[90] == "SP":
             physicstext = ",physicsfilter='cesaro|sp'"
-        elif physics2text == "GP + SP":
+        elif param[90] == "GP + SP":
             physicstext = ",physicsfilter='gp|cesaro|sp'"
-    elif physics1text == "Exp":
-        if physics2text == "None":
+    elif param[89] == "Exp":
+        if param[90] == "None":
             physicstext = ''
-        elif physics2text == "GP":
+        elif param[90] == "GP":
             physicstext = ",physicsfilter='gp|exp'"
-        elif physics2text == "SP":
+        elif param[90] == "SP":
             physicstext = ",physicsfilter='exp|sp'"
-        elif physics2text == "GP + SP":
+        elif param[90] == "GP + SP":
             physicstext = ",physicsfilter='gp|exp|sp'"
-    elif physics1text == "Lh":
-        if physics2text == "None":
+    elif param[89] == "Lh":
+        if param[90] == "None":
             physicstext = ''
-        elif physics2text == "GP":
+        elif param[90] == "GP":
             physicstext = ",physicsfilter='gp|lh'"
-        elif physics2text == "SP":
+        elif param[90] == "SP":
             physicstext = ",physicsfilter='lh|sp'"
-        elif physics2text == "GP + SP":
+        elif param[90] == "GP + SP":
             physicstext = ",physicsfilter='gp|lh|sp'"
-    if stormtext == "True":
-        if highcadtext == "True":
+    if param[91] == "True":
+        if param[92] == "True":
             stormstext = ",\n				  stormcapture={'toggle': 1,'NKTRIGGER': 1},highcadence={'toggle': 1,'start': 320,'interval': 4,'end': 576})\n"
         else:
             stormstext = ",\n				  stormcapture={'toggle': 1,'NKTRIGGER': 1})\n"
     else:
         stormstext = ')\n'
-    if runtobaltext == "True":
-        runtext = nametext+'.runtobalance(threshold='+thresholdtext+',baseline='+baselinetext+',maxyears='+maxyeartext+',minyears='+minyeartext
+    if param[93] == "True":
+        runtext = str(name_var)+'.runtobalance(threshold='+param[95]+',baseline='+param[96]+',maxyears='+param[97]+',minyears='+param[98]
     else:
-        runtext = nametext+'.run(years='+runtimetext
+        runtext = str(name_var)+'.run(years='+param[94]
 
 #Formatting
-    format_name = "import exoplasim as exo\n"+nametext+' = exo.Model(workdir="'+nametext+'",modelname="'+nametext+'",'
-    format_model = "inityear="+yeartext+',outputtype="'+typetext+'",ncpus='+cpustext+',precision='+prestext+',resolution='+resotext+crashtext+',layers='+layertext+recomtext+')\n'
-    format_stellar = nametext+".configure(startemp="+startext+',flux='+fluxtext+',\n'
-    format_orbit = "				  year="+orbptext+',eccentricity='+eccetext+',obliquity='+oblitext+',lonvernaleq='+lonvtext+',fixedorbit='+fixotext+',\n'
+    format_name = "import exoplasim as exo\n"+param[0]+' = exo.Model(workdir="'+param[0]+'",modelname="'+param[0]+'",'
+    format_model = "inityear="+param[1]+',outputtype="'+param[2]+'",ncpus='+param[3]+',precision='+param[4]+',resolution="'+param[5]+'"'+crashtext+',layers='+param[7]+recomtext+')\n'
+    format_stellar = param[0]+".configure(startemp="+param[9]+',flux='+param[10]+',\n'
+    format_orbit = "				  year="+param[11]+',eccentricity='+param[12]+',obliquity='+param[13]+',lonvernaleq='+param[14]+',fixedorbit='+param[15]+',\n'
     format_rotation = "				  "+rottext+',\n'
-    format_planet = '				  gravity='+gravtext+',radius='+radustext+',orography='+orogtext+',\n'
+    format_planet = '				  gravity='+param[21]+',radius='+param[22]+',orography='+param[23]+',\n'
     format_vegetation = vegetationtext
     format_surface = "				  wetsoil="+surfacetext1+surfacetext2
     format_geography = "				  "+aquaplanetext+dsrtplanetext+landmaptext+topomaptext+'\n'
     format_atmosphere = "				  "+atmospheretext+'\n'
     format_ppressure = ppressuretext
     format_glacier = glacialtext
-    format_timekeep = "				  timestep="+timesteptext+',runsteps='+runsteptext+snapshotstext+",otherargs={'NSTPW@plasim_namelist':'"+nsptwtext+"'}"+physicstext+filerstrt
+    format_timekeep = "				  timestep="+param[83]+',runsteps='+param[84]+snapshotstext+",otherargs={'NSTPW@plasim_namelist':'"+param[86]+"'}"+physicstext+filerstrt
     format_storms = stormstext
-    format_export = nametext+".exportcfg()\n"
-    format_run = runtext+',crashifbroken='+crashbrkntext+',clean='+cleantext+')\n'
-    format_finalise = nametext+'.finalize(allyears='+allyearstext+',keeprestarts='+keeprstrtstext+')\n'
-    format_save = nametext+'.save()'
+    format_export = param[0]+".exportcfg()\n"
+    format_run = runtext+',crashifbroken='+param[99]+',clean='+param[100]+')\n'
+    format_finalise = param[0]+'.finalize(allyears='+param[101]+',keeprestarts='+param[102]+')\n'
+    format_save = param[0]+'.save()'
     print("Formatting Complete...")
 #Writing to file
     print("Saving Main File...")
@@ -717,6 +616,253 @@ def save_file():
         output_file.write(format_finalise)
         output_file.write(format_save)
         print("Saving Complete!")
+
+def save_ini():
+    """Save the current parameters."""
+    filepath = asksaveasfilename(
+        defaultextension="ini",
+        filetypes=[("INI Files", "*.ini"), ("All Files", "*.*")],
+    )
+    if not filepath:
+        return
+#Getting input text
+    os.system('cls' if os.name == 'nt' else "printf '\033c'")
+    param = [str(name_var.get()),str(year_var.get()),str(output_var.get()),str(cpu_var.get()),str(pres_var.get()),str(res_var.get()),str(crash_var.get()),str(layers_var.get()),str(recom_var.get()),str(startemp_var.get()),str(flux_var.get()),str(orbp_var.get()),str(ecc_var.get()),str(obli_var.get()),str(lon_var.get()),str(fixed_var.get()),str(rot_var.get()),str(tidal_var.get()),str(stellon_var.get()),str(desync_var.get()),str(tempcon_var.get()),str(gravity_var.get()),str(radius_var.get()),str(orogph_var.get()),str(aquap_var.get()),str(desertp_var.get()),str(vegetat_var.get()),str(vegacce_var.get()),str(nfrtgrw_var.get()),str(initgrw_var.get()),str(initstcd_var.get()),str(initrgh_var.get()),str(initslc_var.get()),str(initplc_var.get()),str(wetso_var.get()),str(soilalbtog_var.get()),str(soilalb_var.get()),str(soildepthtog_var.get()),str(soildepth_var.get()),str(capsoiltog_var.get()),str(capsoil_var.get()),str(soilwcptog_var.get()),str(soilwcp_var.get()),str(soilsattog_var.get()),str(soilsat_var.get()),str(snowalbtog_var.get()),str(snowalb_var.get()),str(mxsnowtog_var.get()),str(mxsnow_var.get()),str(seaice_var.get()),str(oceanalbtog_var.get()),str(oceanalb_var.get()),str(mldepthtog_var.get()),str(mldepth_var.get()),str(oceanzen_var.get()),str(imgsratogtog_var.get()),str(hghtmpimg_var.get()),str(waterhres_var.get()),str(highelev_var.get()),str(lowelev_var.get()),str(imgdebugtog_var.get()),str(sranme_var.get()),str(lndsra_var.get()),str(tposra_var.get()),str(pressuretog_var.get()),str(pressure_var.get()),str(gascontog_var.get()),str(gascon_var.get()),str(drycoretog_var.get()),str(ozone_var.get()),str(partialptog_var.get()),str(pH2_var.get()),str(pHe_var.get()),str(pN2_var.get()),str(pO2_var.get()),str(pAr_var.get()),str(pNe_var.get()),str(pKr_var.get()),str(pH2O_var.get()),str(pCO2_var.get()),str(glacialtog_var.get()),str(inith_var.get()),str(mndph_var.get()),str(tmestp_var.get()),str(runstp_var.get()),str(snpsht_var.get()),str(nsptw_var.get()),str(restrtfle_var.get()),str(restrtfletog_var.get()),str(phyfilt1_var.get()),str(phyfilt2_var.get()),str(stormcltog_var.get()),str(highcadtog_var.get()),str(rntbaltog_var.get()),str(runtme_var.get()),str(trshld_var.get()),str(bselne_var.get()),str(maxyr_var.get()),str(minyr_var.get()),str(cshibrktog_var.get()),str(cleantog_var.get()),str(allyrstog_var.get()),str(kprststog_var.get())]
+    print("Inputs gathered...")
+    config = configparser.ConfigParser()#
+    config['Model Parameters'] = {'Project Name': param[0],
+                                  'Start Year': param[1],
+                                  'Output Type': param[2],
+                                  'CPU Count': param[3],
+                                  'Precision': param[4],
+                                  'Resolution': param[5],
+                                  'Crash Tolerant': param[6],
+                                  'Layers': param[7],
+                                  'Recompile': param[8]}
+    config['Stellar Parameters'] = {'Star Temperature': param[9],
+                                    'Stellar Flux': param[10]}
+    config['Orbital Parameters'] = {'Year Length': param[11],
+                                    'Day Length': param[16],
+                                    'Eccentricity': param[12],
+                                    'Obliquity': param[13],
+                                    'Longitude Of Periapsis': param[14],
+                                    'Fixed Orbit': param[15]}
+    config['Rotational Parameters'] = {'Tidally Locked': param[17],
+                                       'Substellar Longitude': param[18],
+                                       'Substellar Desync': param[19],
+                                       'Temperature Contrast': param[20]}
+    config['Planetary Parameters'] = {'Gravity': param[21],
+                                      'Radius': param[22],
+                                      'Orography': param[23],
+                                      'Aqua Planet': param[24],
+                                      'Desert Planet': param[25]}
+    config['Vegetation Parameters'] = {'Vegetation': param[26],
+                                       'Vegetation Acceleration': param[27],
+                                       'Biomass Growth': param[28],
+                                       'Inital Growth': param[29],
+                                       'Stomatal Conductance': param[30],
+                                       'Vegetation Roughness': param[31],
+                                       'Soil Carbon Content': param[32],
+                                       'Plant Carbon Content': param[33]}
+    config['Surface Parameters'] = {'Wet Soil': param[34],
+                                    'Soil Albedo Toggle': param[35],
+                                    'Soil Albedo Value': param[36],
+                                    'Soil Depth Toggle': param[37],
+                                    'Soil Depth Value': param[38],
+                                    'Soil Heat Capacity Toggle': param[39],
+                                    'Soil Heat Capacity Value': param[40],
+                                    'Soil Water Capacity Toggle': param[41],
+                                    'Soil Water Capacity Value': param[42],
+                                    'Soil Saturation Toggle': param[43],
+                                    'Soil Saturation Value': param[44],
+                                    'Snow Albedo Toggle': param[45],
+                                    'Snow Albedo Value': param[46],
+                                    'Max Snow Toggle': param[47],
+                                    'Max Snow Value': param[48],
+                                    'Sea Ice': param[49],
+                                    'Ocean Albedo Toggle': param[50],
+                                    'Ocean Albedo Value': param[51],
+                                    'Mixed Layer Depth Toggle': param[52],
+                                    'Mixed Layer Depth Value': param[53],
+                                    'Ocean Zenith': param[54]}
+    config['Geographic Parameters'] = {'Image/SRA Toggle': param[55],
+                                       'Height Map Image': param[56],
+                                       'Water Threshold': param[57],
+                                       'Highest Elevation': param[58],
+                                       'Lowest Elevation': param[59],
+                                       'Image Debug': param[60],
+                                       'SRA Name': param[61],
+                                       'Land SRA': param[62],
+                                       'Topographic SRA': param[63]}
+    config['Atmospheric Parameters'] = {'Pressure Toggle': param[64],
+                                        'Pressure Value': param[65],
+                                        'Gas Constant Toggle': param[66],
+                                        'Gas Constant Value': param[67],
+                                        'Dry Core': param[68],
+                                        'Ozone': param[69],
+                                        'Partial Pressure': param[70],
+                                        'Hydrogen': param[71],
+                                        'Helium': param[72],
+                                        'Nitrogen': param[73],
+                                        'Oxygen': param[74],
+                                        'Argon': param[75],
+                                        'Neon': param[76],
+                                        'Krypton': param[77],
+                                        'Water': param[78],
+                                        'Carbon Dioxide': param[79]}
+    config['Glacial Parameters'] = {'Glaciers': param[80],
+                                    'Height': param[81],
+                                    'Threshold': param[82]}
+    config['Model Dynamic Parameters'] = {'Timestep': param[83],
+                                          'Runsteps': param[84],
+                                          'Snapshots': param[85],
+                                          'NSPTW': param[86],
+                                          'Restart File Toggle': param[87],
+                                          'Restart File Path': param[88],
+                                          'Physics Filter': param[89],
+                                          'Filter Application': param[90],
+                                          'Storm Climatology': param[91],
+                                          'High Cadence': param[92],
+                                          'Run To Balance': param[93],
+                                          'Run Time': param[94],
+                                          'Threshold': param[95],
+                                          'Baseline': param[96],
+                                          'Maximum Year': param[97],
+                                          'Minimum Year': param[98],
+                                          'Crash If Broken': param[99],
+                                          'Clean': param[100],
+                                          'All Years': param[101],
+                                          'Keep Restarts': param[102]}
+    with open(filepath, "w") as output_file:
+        config.write(output_file)
+    print('Config saved!')
+
+def load_ini():
+    filepath = askopenfilename(
+        defaultextension="ini",
+        filetypes=[("INI Files", "*.ini"), ("All Files", "*.*")])
+    if not filepath:
+        return
+    os.system('cls' if os.name == 'nt' else "printf '\033c'")
+    param = [name_var,year_var,output_var,cpu_var,pres_var,res_var,crash_var,layers_var,recom_var,startemp_var,flux_var,orbp_var,ecc_var,obli_var,lon_var,fixed_var,rot_var,tidal_var,stellon_var,desync_var,tempcon_var,gravity_var,radius_var,orogph_var,aquap_var,desertp_var,vegetat_var,vegacce_var,nfrtgrw_var,initgrw_var,initstcd_var,initrgh_var,initslc_var,initplc_var,wetso_var,soilalbtog_var,soilalb_var,soildepthtog_var,soildepth_var,capsoiltog_var,capsoil_var,soilwcptog_var,soilwcp_var,soilsattog_var,soilsat_var,snowalbtog_var,snowalb_var,mxsnowtog_var,mxsnow_var,seaice_var,oceanalbtog_var,oceanalb_var,mldepthtog_var,mldepth_var,oceanzen_var,imgsratogtog_var,hghtmpimg_var,waterhres_var,highelev_var,lowelev_var,imgdebugtog_var,sranme_var,lndsra_var,tposra_var,pressuretog_var,pressure_var,gascontog_var,gascon_var,drycoretog_var,ozone_var,partialptog_var,pH2_var,pHe_var,pN2_var,pO2_var,pAr_var,pNe_var,pKr_var,pH2O_var,pCO2_var,glacialtog_var,inith_var,mndph_var,tmestp_var,runstp_var,snpsht_var,nsptw_var,restrtfle_var,restrtfletog_var,phyfilt1_var,phyfilt2_var,stormcltog_var,highcadtog_var,rntbaltog_var,runtme_var,trshld_var,bselne_var,maxyr_var,minyr_var,cshibrktog_var,cleantog_var,allyrstog_var,kprststog_var]
+    print('Loading Config parameters...')
+    cfg = configparser.ConfigParser()
+    cfg.read(filepath)
+    mdelprm = cfg['Model Parameters']
+    param[0].set(mdelprm.get('Project Name'))
+    param[1].set(mdelprm.get('Start Year'))
+    param[2].set(mdelprm.get('Output Type'))
+    param[3].set(mdelprm.get('CPU Count'))
+    param[4].set(mdelprm.get('Precision'))
+    param[5].set(mdelprm.get('Resolution'))
+    param[6].set(mdelprm.get('Crash Tolerant'))
+    param[7].set(mdelprm.get('Layers'))
+    param[8].set(mdelprm.get('Recompile'))
+    stlrprm = cfg['Stellar Parameters']
+    param[9].set(stlrprm.get('Star Temperature'))
+    param[10].set(stlrprm.get('Stellar Flux'))
+    obtlprm = cfg['Orbital Parameters']
+    param[11].set(obtlprm.get('Year Length'))
+    param[12].set(obtlprm.get('Eccentricity'))
+    param[13].set(obtlprm.get('Obliquity'))
+    param[14].set(obtlprm.get('Longitude Of Periapsis'))
+    param[15].set(obtlprm.get('Fixed Orbit'))
+    param[16].set(obtlprm.get('Day Length'))
+    rtnlprm = cfg['Rotational Parameters']
+    param[17].set(rtnlprm.get('Tidally Locked'))
+    param[18].set(rtnlprm.get('Substellar Longitude'))
+    param[19].set(rtnlprm.get('Substellar Desync'))
+    param[20].set(rtnlprm.get('Temperature Contrast'))
+    plntprm = cfg['Planetary Parameters']
+    param[21].set(plntprm.get('Gravity'))
+    param[22].set(plntprm.get('Radius'))
+    param[23].set(plntprm.get('Orography'))
+    param[24].set(plntprm.get('Aqua Planet'))
+    param[25].set(plntprm.get('Desert Planet'))
+    vgtnprm = cfg['Vegetation Parameters']
+    param[26].set(vgtnprm.get('Vegetation'))
+    param[27].set(vgtnprm.get('Vegetation Acceleration'))
+    param[28].set(vgtnprm.get('Biomass Growth'))
+    param[29].set(vgtnprm.get('Inital Growth'))
+    param[30].set(vgtnprm.get('Stomatal Conductance'))
+    param[31].set(vgtnprm.get('Vegetation Roughness'))
+    param[32].set(vgtnprm.get('Soil Carbon Content'))
+    param[33].set(vgtnprm.get('Plant Carbon Content'))
+    srfcprm = cfg['Surface Parameters']
+    param[34].set(srfcprm.get('Wet Soil'))
+    param[35].set(srfcprm.get('Soil Albedo Toggle'))
+    param[36].set(srfcprm.get('Soil Albedo Value'))
+    param[37].set(srfcprm.get('Soil Depth Toggle'))
+    param[38].set(srfcprm.get('Soil Depth Value'))
+    param[39].set(srfcprm.get('Soil Heat Capacity Toggle'))
+    param[40].set(srfcprm.get('Soil Heat Capacity Value'))
+    param[41].set(srfcprm.get('Soil Water Capacity Toggle'))
+    param[42].set(srfcprm.get('Soil Water Capacity Value'))
+    param[43].set(srfcprm.get('Soil Saturation Toggle'))
+    param[44].set(srfcprm.get('Soil Saturation Value'))
+    param[45].set(srfcprm.get('Snow Albedo Toggle'))
+    param[46].set(srfcprm.get('Snow Albedo Value'))
+    param[47].set(srfcprm.get('Max Snow Toggle'))
+    param[48].set(srfcprm.get('Max Snow Value'))
+    param[49].set(srfcprm.get('Sea Ice'))
+    param[50].set(srfcprm.get('Ocean Albedo Toggle'))
+    param[51].set(srfcprm.get('Ocean Albedo Value'))
+    param[52].set(srfcprm.get('Mixed Layer Depth Toggle'))
+    param[53].set(srfcprm.get('Mixed Layer Depth Value'))
+    param[54].set(srfcprm.get('Ocean Zenith'))
+    geogprm = cfg['Geographic Parameters']
+    param[55].set(geogprm.get('Image/SRA Toggle'))
+    param[56].set(geogprm.get('Height Map Image'))
+    param[57].set(geogprm.get('Water Threshold'))
+    param[58].set(geogprm.get('Highest Elevation'))
+    param[59].set(geogprm.get('Lowest Elevation'))
+    param[60].set(geogprm.get('Image Debug'))
+    param[61].set(geogprm.get('SRA Name'))
+    param[62].set(geogprm.get('Land SRA'))
+    param[63].set(geogprm.get('Topographic SRA'))
+    atmoprm = cfg['Atmospheric Parameters']
+    param[64].set(atmoprm.get('Pressure Toggle'))
+    param[65].set(atmoprm.get('Pressure Value'))
+    param[66].set(atmoprm.get('Gas Constant Toggle'))
+    param[67].set(atmoprm.get('Gas Constant Value'))
+    param[68].set(atmoprm.get('Dry Core'))
+    param[69].set(atmoprm.get('Ozone'))
+    param[70].set(atmoprm.get('Partial Pressure'))
+    param[71].set(atmoprm.get('Hydrogen'))
+    param[72].set(atmoprm.get('Helium'))
+    param[73].set(atmoprm.get('Nitrogen'))
+    param[74].set(atmoprm.get('Oxygen'))
+    param[75].set(atmoprm.get('Argon'))
+    param[76].set(atmoprm.get('Neon'))
+    param[77].set(atmoprm.get('Krypton'))
+    param[78].set(atmoprm.get('Water'))
+    param[79].set(atmoprm.get('Carbon Dioxide'))
+    glclprm = cfg['Glacial Parameters']
+    param[80].set(glclprm.get('Glaciers'))
+    param[81].set(glclprm.get('Height'))
+    param[82].set(glclprm.get('Threshold'))
+    mdldprm = cfg['Model Dynamic Parameters']
+    param[83].set(mdldprm.get('Timestep'))
+    param[84].set(mdldprm.get('Runsteps'))
+    param[85].set(mdldprm.get('Snapshots'))
+    param[86].set(mdldprm.get('NSPTW'))
+    param[87].set(mdldprm.get('Restart File Toggle'))
+    param[88].set(mdldprm.get('Restart File Path'))
+    param[89].set(mdldprm.get('Physics Filter'))
+    param[90].set(mdldprm.get('Filter Application'))
+    param[91].set(mdldprm.get('Storm Climatology'))
+    param[92].set(mdldprm.get('High Cadence'))
+    param[93].set(mdldprm.get('Run To Balance'))
+    param[94].set(mdldprm.get('Run Time'))
+    param[95].set(mdldprm.get('Threshold'))
+    param[96].set(mdldprm.get('Baseline'))
+    param[97].set(mdldprm.get('Maximum Year'))
+    param[98].set(mdldprm.get('Minimum Year'))
+    param[99].set(mdldprm.get('Crash If Broken'))
+    param[100].set(mdldprm.get('Clean'))
+    param[101].set(mdldprm.get('All Years'))
+    param[102].set(mdldprm.get('Keep Restarts'))
+    print('Config parameters loaded!')
 
 window = Tk()# Start the application
 window.title("ExoPlaSim: Input Configurator (EPS:IC)")
@@ -1691,8 +1837,20 @@ kprststog_n.grid(row=19, column=2, sticky="w")
 
 #Check
 compat = Label(text="Compatability")
-compat.grid(row=2, column=7, sticky="s")
+compat.grid(row=2, column=3, sticky="s")
 sys_check = Button(text="Compatability Check", command=system_check)
+sys_check.grid(row=3, column=3, sticky="n")
+
+#Load INI
+compat = Label(text="Import Parameters")
+compat.grid(row=2, column=5, sticky="s")
+sys_check = Button(text="Load INI", command=load_ini)
+sys_check.grid(row=3, column=5, sticky="n")
+
+#Export INI
+compat = Label(text="Export Parameters")
+compat.grid(row=2, column=7, sticky="s")
+sys_check = Button(text="Export INI", command=save_ini)
 sys_check.grid(row=3, column=7, sticky="n")
 
 #Save
