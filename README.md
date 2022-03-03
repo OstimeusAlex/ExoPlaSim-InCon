@@ -1,5 +1,5 @@
 # ExoPlaSim-InCon
-![Layout of ExoPlaSim-InCon, featuring categorised planels with most of ExoPlaSim's options.]("Layout of ExoPlaSim-InCon, featuring categorised planels with most of ExoPlaSim's options.")
+![Layout of ExoPlaSim-InCon, featuring categorised planels with most of ExoPlaSim's options.](preview.png "Layout of ExoPlaSim-InCon, featuring categorised planels with most of ExoPlaSim's options.")
 
 A user-friendly interface for configuring an [ExoPlaSim](https://github.com/alphaparrot/ExoPlaSim) .py file.
 ## Features
