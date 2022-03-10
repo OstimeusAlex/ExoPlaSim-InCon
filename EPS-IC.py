@@ -406,7 +406,9 @@ def save_file():
                 trench_value=float(param[59]),
                 resotext=param[5],
                 sra_name=param[61]
-            ) 
+            )
+            landmaptext = 'landmap="SRA/'+param[61]+'_surf_0172.sra",'
+            topomaptext = 'topomap="SRA/'+param[61]+'_surf_0129.sra",'
         else:
             lndsrafle = ntpath.basename(param[62])
             tposrafle = ntpath.basename(param[63])
@@ -421,7 +423,7 @@ def save_file():
             shutil.copyfile(param[62], lnd_path)
             shutil.copyfile(param[63], tpo_path)
             landmaptext = 'landmap="SRA/'+lndsrafle+'",'
-            topomaptext = 'topomap="SRA/'+tposrafle+'"<'
+            topomaptext = 'topomap="SRA/'+tposrafle+'",'
     else:
         print("Formatting...")
         aquaplanetext = 'aquaplanet=True,'
@@ -445,6 +447,10 @@ def save_file():
         rottext = 'synchronous='+param[17]+',substellarlon='+param[18]+',desync='+param[19]+',tlcontrast='+param[20]
     else:
         rottext = 'rotationperiod='+param[16]
+    if param[23] != "1.0":
+        orographtext = ',orography='+param[23]
+    else:
+        orographtext = ''
     if param[26] == "None":
         vegetationtext = ''
     else:
@@ -512,7 +518,7 @@ def save_file():
     else:
         ppressuretext = ''
     if param[80] == "True":
-        glacialtext = "				  glacier={‘toggle’: True, ‘mindepth’: "+param[82]+', ‘initialh’: '+param[81]+'},\n'
+        glacialtext = "				  glaciers={'toggle': True,'mindepth': "+param[82]+",'initialh': "+param[81]+"},\n"
     else:
         glacialtext = ''
     param[85] = int(param[85])
@@ -542,7 +548,7 @@ def save_file():
             physicstext = ",physicsfilter='gp|cesaro'"
         elif param[90] == "SP":
             physicstext = ",physicsfilter='cesaro|sp'"
-        elif param[90] == "GP + SP":
+        elif param[90] == "GP+SP":
             physicstext = ",physicsfilter='gp|cesaro|sp'"
     elif param[89] == "Exp":
         if param[90] == "None":
@@ -551,7 +557,7 @@ def save_file():
             physicstext = ",physicsfilter='gp|exp'"
         elif param[90] == "SP":
             physicstext = ",physicsfilter='exp|sp'"
-        elif param[90] == "GP + SP":
+        elif param[90] == "GP+SP":
             physicstext = ",physicsfilter='gp|exp|sp'"
     elif param[89] == "Lh":
         if param[90] == "None":
@@ -560,7 +566,7 @@ def save_file():
             physicstext = ",physicsfilter='gp|lh'"
         elif param[90] == "SP":
             physicstext = ",physicsfilter='lh|sp'"
-        elif param[90] == "GP + SP":
+        elif param[90] == "GP+SP":
             physicstext = ",physicsfilter='gp|lh|sp'"
     if param[91] == "True":
         if param[92] == "True":
@@ -570,9 +576,13 @@ def save_file():
     else:
         stormstext = ')\n'
     if param[93] == "True":
-        runtext = str(name_var)+'.runtobalance(threshold='+param[95]+',baseline='+param[96]+',maxyears='+param[97]+',minyears='+param[98]
+        runtext = param[0]+'.runtobalance(threshold='+param[95]+',baseline='+param[96]+',maxyears='+param[97]+',minyears='+param[98]
     else:
-        runtext = str(name_var)+'.run(years='+param[94]
+        runtext = param[0]+'.run(years='+param[94]
+    if param[100] == "True":
+        cleantext = ',clean='+param[100]
+    else:
+        cleantext = ''
 
 #Formatting
     format_name = "import exoplasim as exo\n"+param[0]+' = exo.Model(workdir="'+param[0]+'",modelname="'+param[0]+'",'
@@ -580,7 +590,7 @@ def save_file():
     format_stellar = param[0]+".configure(startemp="+param[9]+',flux='+param[10]+',\n'
     format_orbit = "				  year="+param[11]+',eccentricity='+param[12]+',obliquity='+param[13]+',lonvernaleq='+param[14]+',fixedorbit='+param[15]+',\n'
     format_rotation = "				  "+rottext+',\n'
-    format_planet = '				  gravity='+param[21]+',radius='+param[22]+',orography='+param[23]+',\n'
+    format_planet = '				  gravity='+param[21]+',radius='+param[22]+orographtext+',\n'
     format_vegetation = vegetationtext
     format_surface = "				  wetsoil="+surfacetext1+surfacetext2
     format_geography = "				  "+aquaplanetext+dsrtplanetext+landmaptext+topomaptext+'\n'
@@ -590,8 +600,8 @@ def save_file():
     format_timekeep = "				  timestep="+param[83]+',runsteps='+param[84]+snapshotstext+",otherargs={'NSTPW@plasim_namelist':'"+param[86]+"'}"+physicstext+filerstrt
     format_storms = stormstext
     format_export = param[0]+".exportcfg()\n"
-    format_run = runtext+',crashifbroken='+param[99]+',clean='+param[100]+')\n'
-    format_finalise = param[0]+'.finalize(allyears='+param[101]+',keeprestarts='+param[102]+')\n'
+    format_run = runtext+',crashifbroken='+param[99]+cleantext+')\n'
+    format_finalise = param[0]+'.finalize("'+param[0]+'",allyears='+param[101]+',keeprestarts='+param[102]+')\n'
     format_save = param[0]+'.save()'
     print("Formatting Complete...")
 #Writing to file
@@ -1181,7 +1191,7 @@ hghtmpimg_var.set('')
 hghtmpimg_n = Entry(master=geopar_frame,textvariable=hghtmpimg_var, width=7)
 hghtmpimg_n.config(state='enabled')
 hghtmpimg_n.grid(row=2, column=2, sticky="w")
-hghtmpimg_b = Button(master=geopar_frame,text="Open",command=hghtimgget, width=7)
+hghtmpimg_b = Button(master=geopar_frame,text="...",command=hghtimgget, width=3)
 hghtmpimg_b.config(state='enabled')
 hghtmpimg_b.grid(row=2, column=3, sticky="w")
 
@@ -1232,7 +1242,7 @@ lndsra_var.set('')
 lndsra_n = Entry(master=geopar_frame,textvariable=lndsra_var, width=7)
 lndsra_n.config(state='disabled')
 lndsra_n.grid(row=8, column=2, sticky="w")
-lndsra_b = Button(master=geopar_frame,text="Open",command=landsraget, width=7)
+lndsra_b = Button(master=geopar_frame,text="...",command=landsraget, width=3)
 lndsra_b.config(state='disabled')
 lndsra_b.grid(row=8, column=3, sticky="w")
 
@@ -1243,7 +1253,7 @@ tposra_var.set('')
 tposra_n = Entry(master=geopar_frame,textvariable=tposra_var, width=7)
 tposra_n.config(state='disabled')
 tposra_n.grid(row=9, column=2, sticky="w")
-tposra_b = Button(master=geopar_frame,text="Open",command=toposraget, width=7)
+tposra_b = Button(master=geopar_frame,text="...",command=toposraget, width=3)
 tposra_b.config(state='disabled')
 tposra_b.grid(row=9, column=3, sticky="w")
 
@@ -1714,7 +1724,7 @@ restrtfle_var.set('')
 restrtfle_n = Entry(master=mdldynpar_frame,textvariable=restrtfle_var, width=7)
 restrtfle_n.config(state='disabled')
 restrtfle_n.grid(row=5, column=2, sticky="w")
-restrtfle_b = Button(master=mdldynpar_frame,text="Open",command=rstrtfleget, width=7)
+restrtfle_b = Button(master=mdldynpar_frame,text="...",command=rstrtfleget, width=3)
 restrtfle_b.config(state='disabled')
 restrtfle_b.grid(row=5, column=3, sticky="w")
 restrtfletog_var = StringVar()
