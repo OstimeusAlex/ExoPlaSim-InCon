@@ -468,8 +468,3 @@ def helpTextTk(entry, element, event):
     if isinstance(element, tkinter.Text):
         element.delete('1.0', tkinter.END)
         element.insert('1.0', HELP_DICT[entry])
-    helpText(entry, event)
-
-def helpText(entry, event):
-    os.system('cls' if os.name == 'nt' else "printf '\033c'")
-    print(HELP_DICT[entry])
