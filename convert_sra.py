@@ -55,14 +55,11 @@ def color_ocean(inarray, outlist, w, h): #turn 0/1 array to black/white (ocean/l
 				rgb = (0,0,0)
 			outlist.append(rgb)
 
-
 def color_land(inarray, outlist, w, h): #turn array to white (land) array
 	for y in range(w):
 		for x in range(h):
 			rgb = (255,255,255)
 			outlist.append(rgb)
-
-
 
 #               string,   string  float boolean     boolean         integer     float        float  String, see dict String
 def convert_sra(filepath, infile, grav, debug_img, desert_planet, floor_value, peak_value, trench_value, resotext, sra_name):
@@ -86,20 +83,20 @@ def convert_sra(filepath, infile, grav, debug_img, desert_planet, floor_value, p
 
     #altitude ranges
     if not desert_planet:
-
         greyscale_img = grey_img*255                #converts 0-1 to 0-255
         max_img = 255-(floor_value)                 #max value lowered by floor value
         rescaled_img = (greyscale_img-(floor_value))#array lowered by floor value
         rescaled_img[rescaled_img <= 0] = 0         #any negative value becomes 0 (ocean)
         rescaled_img = (rescaled_img/max_img)*peak_value*grav #array converted to 0-1, before multiplied by max height and gravity (geopotential)
-
+        if debug_img:
+            color_ocean(rescaled_img, img_rgb, img_width, img_height)
     else:
         range_value = peak_value-trench_value
         rescaled_img = ((grey_img*range_value)-trench_value)*grav #converts 0-1 to trench-peak times gravity (geopotential)
+        color_land(rescaled_img, img_rgb, img_width, img_height)
 
     min = float(np.min(rescaled_img))           #finds the min height (should be near deepest depth)
     max = float(np.max(rescaled_img))           #finds the max height (should be near absolute max height)
-    color_land(rescaled_img, img_rgb, img_width, img_height)
 
     #Debug image 1 generation
     if debug_img:
@@ -138,7 +135,6 @@ def convert_sra(filepath, infile, grav, debug_img, desert_planet, floor_value, p
 
     img_rgb = []
     if not desert_planet:
-
         b_w = chunked.copy()[:,:,:]                 #new empty 3d array, avoids overriding original array!
         for x in range(length_ratio):
             for y in range(width_ratio):
@@ -175,7 +171,7 @@ def convert_sra(filepath, infile, grav, debug_img, desert_planet, floor_value, p
     sra_129 = np.array(list_image).reshape(-1, 8) #Rearranges list into 2d array that matches sra format
     sra_172 = np.array(b_w).reshape(-1, 8)
 
-    if not desert_planet:
+    if desert_planet:
         sra_172[:,:] = 1                            #Everything becomes land
 
     fl_height = float(height)                       #Apparently it doesn't like integers
