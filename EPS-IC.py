@@ -601,8 +601,7 @@ def save_file():
     format_storms = stormstext
     format_export = param[0]+".exportcfg()\n"
     format_run = runtext+',crashifbroken='+param[99]+cleantext+')\n'
-    format_finalise = param[0]+'.finalize("'+param[0]+'",allyears='+param[101]+',keeprestarts='+param[102]+')\n'
-    format_save = param[0]+'.save()'
+    format_finalise = param[0]+'.finalize("'+param[0]+'",allyears='+param[101]+',keeprestarts='+param[102]+cleantext+')\n'
     print("Formatting Complete...")
 #Writing to file
     print("Saving Main File...")
@@ -624,7 +623,6 @@ def save_file():
         output_file.write(format_export)
         output_file.write(format_run)
         output_file.write(format_finalise)
-        output_file.write(format_save)
         print("Saving Complete!")
 
 def save_ini():
@@ -931,7 +929,7 @@ name.grid(row=1, column=2, sticky="w")
 #Start Year
 year = createOptionLabel(masterIn=modpar_frame, textIn="Start Year: ", helpText="helpstrtyr", rowIn=2, colIn=1)
 year_var = IntVar()
-year_var.set(1)
+year_var.set(0)
 year_n = Entry(master=modpar_frame,textvariable=year_var, width=7)
 year_n.grid(row=2, column=2, sticky="w")
 
