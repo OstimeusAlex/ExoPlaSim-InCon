@@ -72,10 +72,10 @@ def convert_sra(filepath, infile, grav, debug_img, desert_planet, floor_value, p
     if debug_img:
         print("Debug Images Enabled...")
     
-    with open(infile, 'r', encoding='utf-8') as in_file:
-        red_img = imread(in_file)[:,:,0]             #opens red channel
-        green_img = imread(in_file)[:,:,1]           #opens green channel
-        blue_img = imread(in_file)[:,:,2]            #opens blue channel
+    with Image.open(infile, 'r') as in_file:
+        red_img = np.array(in_file)[:,:,0]             #opens red channel
+        green_img = np.array(in_file)[:,:,1]           #opens green channel
+        blue_img = np.array(in_file)[:,:,2]            #opens blue channel
     grey_img = (red_img+green_img+blue_img)/3   #averages color channels and scales from 0-1
 
     img_width = len(grey_img[0])                #finds image width
