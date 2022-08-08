@@ -372,7 +372,7 @@ def system_check():
         print("Changing this to "+str(year_corct)+" will work better.")
     day_check1 = (check_day*1440)/check_time
     day_check2 = (check_run/12)/((check_day*1440)/check_time)
-    if day_check1 == round(day_check1):
+    if day_check1 - round(float(day_check1)) <= 0.00001:
         if day_check2 == round(day_check2):
             print("Day: Nominal")
         else:
