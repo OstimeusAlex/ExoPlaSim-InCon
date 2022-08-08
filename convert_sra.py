@@ -72,11 +72,14 @@ def convert_sra(filepath, infile, grav, debug_img, desert_planet, floor_value, p
     if debug_img:
         print("Debug Images Enabled...")
     
-    with Image.open(infile, 'r') as in_file:
-        red_img = np.array(in_file)[:,:,0]             #opens red channel
-        green_img = np.array(in_file)[:,:,1]           #opens green channel
-        blue_img = np.array(in_file)[:,:,2]            #opens blue channel
-    grey_img = (red_img+green_img+blue_img)/3   #averages color channels and scales from 0-1
+    in_file = imread(infile)
+    if len(in_file.shape) == 3:
+        red_img = np.array(in_file)[:,:,0]          #opens red channel
+        green_img = np.array(in_file)[:,:,1]        #opens green channel
+        blue_img = np.array(in_file)[:,:,2]         #opens blue channel
+        grey_img = (red_img+green_img+blue_img)/3   #averages color channels and scales from 0-1
+    else:
+        grey_img = in_file
 
     img_width = len(grey_img[0])                #finds image width
     img_height = len(grey_img)                  #finds image height
@@ -137,21 +140,13 @@ def convert_sra(filepath, infile, grav, debug_img, desert_planet, floor_value, p
     img_rgb = []
     if not desert_planet:
         b_w = chunked.copy()[:,:,:]                 #new empty 3d array, avoids overriding original array!
-        for x in range(length_ratio):
-            for y in range(width_ratio):
-                for z in range(height_ratio):
-                    checker = chunked[x,y,z]
-                    if checker > 0:                 #converts 3d geopotential array to 3d land mask array
-                        b_w[x,y,z] = 1
-                    else:
-                        b_w[x,y,z] = 0
-
+        b_w[b_w > 0] = 1
+        b_w[b_w <= 0] = 0
         b_w = b_w.mean(axis=(1,2))                  #averages land mask array into 1d list
         dechunked = chunked.mean(axis=(1,2))        #simpler approach, since there's no ocean there's no need to check for it, so just average all the land to 1d list
         dechunked = np.reshape(dechunked, (height, width)) #reshapes list to equirectangular 2d array
         b_w = np.reshape(b_w, (height, width))
         color_ocean(b_w, img_rgb, width, height)    #converts to land mask
-
     else:
         #simpler approach, since there's no ocean there's no need to check for it, so just average all the land to 1d list
         dechunked = chunked.mean(axis=(1,2))    
