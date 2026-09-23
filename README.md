@@ -1,7 +1,7 @@
-# ExoPlaSim-InCon
-# Update
+# Important Update!
 This interface has been superseded by [BICEPS](https://github.com/OstimeusAlex/BICEPS), which now features new EPS modules as well as a bunch of bugfixes.
 
+# ExoPlaSim-InCon
 ![Layout of ExoPlaSim-InCon, featuring categorised planels with most of ExoPlaSim's options.](preview.png "Layout of ExoPlaSim-InCon, featuring categorised planels with most of ExoPlaSim's options.")
 
 A user-friendly interface for configuring an [ExoPlaSim](https://github.com/alphaparrot/ExoPlaSim) .py file.
